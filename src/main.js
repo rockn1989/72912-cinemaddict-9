@@ -5,7 +5,10 @@ import {createSortTemplate} from '../src/components/sort.js';
 import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
 import {createFilmsListTemplate} from '../src/components/films-list.js';
 import {createFilmsListExtraTemplate} from '../src/components/films-list-extra.js';
+
+import {getFilm} from '../src/components/card-data.js';
 import {createCardTemplate} from '../src/components/card.js';
+
 import {createPopupTemplates} from '../src/components/popup.js';
 
 import {createTitleTemplates} from '../src/components/title.js';
@@ -25,9 +28,10 @@ renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
 for (let i = 0; i < 5; i++) {
-  renderComponent(`.films-list .films-list__container`, createCardTemplate(), `beforeend`);
+  renderComponent(`.films-list .films-list__container`, new Array(1).fill(``).map(getFilm).map(createCardTemplate).join(``), `beforeend`);
 }
-
-renderComponent(`.films`, createFilmsListExtraTemplate(`Top rated`), `beforeend`);
-renderComponent(`.films`, createFilmsListExtraTemplate(`Most commented`), `beforeend`);
+//renderComponent(`.films`, createFilmsListExtraTemplate(`Top rated`), `beforeend`);
+//renderComponent(`.films`, createFilmsListExtraTemplate(`Most commented`), `beforeend`);
 renderComponent(`body`, createPopupTemplates(), `beforeend`);
+
+document.querySelector('.film-details').style.display = 'none';

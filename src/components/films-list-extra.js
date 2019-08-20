@@ -1,4 +1,4 @@
-import {createTitleTemplates} from '../components/title.js';
+/* import {createTitleTemplates} from '../components/title.js';
 import {createCardTemplate} from '../components/card.js';
 
 const CARDS_COUNT = 2;
@@ -16,3 +16,4 @@ const createFilmsListExtraTemplate = (titleName) => `<section class="films-list-
 </section>`;
 
 export {createFilmsListExtraTemplate};
+ */
