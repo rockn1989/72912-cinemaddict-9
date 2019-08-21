@@ -2,8 +2,8 @@ export const createCardTemplate = ({title, rating, dateRealease, duration, genre
           <h3 class="film-card__title">${Array.from(title)[Math.floor(Math.random() * title.size)]}</h3>
           <p class="film-card__rating">${rating}</p>
           <p class="film-card__info">
-            <span class="film-card__year">${dateRealease}</span>
-            <span class="film-card__duration">${duration}</span>
+            <span class="film-card__year">${new Date(dateRealease).toDateString()}</span>
+            <span class="film-card__duration">${new Date(duration).getHours()}h</span>
             <span class="film-card__genre">${genre}</span>
           </p>
           <img src="./images/posters/${imgName}" alt="" class="film-card__poster">

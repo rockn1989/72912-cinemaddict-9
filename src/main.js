@@ -18,6 +18,56 @@ const renderComponent = (container, component, position) => {
   document.querySelector(container).insertAdjacentHTML(position, component);
 };
 
+const COUNT_FILMS = 8;
+const FILTERS = [`All films`, `Watchlist`, `History`, `Favorite`, `Stats`];
+const allFilms = [];
+const topRated = [];
+const mostCommented = [];
+
+for (let i = 0; i < COUNT_FILMS; i++) {
+  allFilms.push(getFilm());
+}
+
+allFilms.filter(({rating}) => {
+  topRated.push(rating);
+}).sort((a, b) => b.charCodeAt(0) - a.charCodeAt(0));
+console.log(topRated)
+/* for (let i = 0; i < COUNT_FILMS; i++) {
+  topRated.push(getFilm());
+}
+
+for (let i = 0; i < COUNT_FILMS; i++) {
+  mostCommented.push(getFilm());
+}
+ */
+
+const FILTER_DATA = FILTERS.map((filterName) => {
+  let filterCount;
+  switch (filterName) {
+    case `All films` :
+      filterCount = allFilms.length;
+      break;
+    case `Watchlist` :
+      filterCount = allFilms.filter(({hasWatchlist}) => hasWatchlist).length;
+      break;
+    case `History` :
+      filterCount = allFilms.filter(({hasWatched}) => hasWatched).length;
+      break;
+    case `Favorite` :
+      filterCount = allFilms.filter(({isFavorite}) => isFavorite).length;
+      break;
+    case `Stats` :
+      filterCount = 0;
+      break;
+    default:
+      return 0;
+  }
+  return {
+    title: filterName,
+    count: filterCount
+  };
+});
+
 renderComponent(`.header`, createSearchTemplate(), `beforeend`);
 renderComponent(`.header`, createUserProfileTemplate(), `beforeend`);
 renderComponent(`.main`, createSiteMenuTemplate(), `beforeend`);
@@ -27,11 +77,11 @@ renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
 renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true), `afterbegin`);
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
-for (let i = 0; i < 5; i++) {
-  renderComponent(`.films-list .films-list__container`, new Array(1).fill(``).map(getFilm).map(createCardTemplate).join(``), `beforeend`);
-}
-//renderComponent(`.films`, createFilmsListExtraTemplate(`Top rated`), `beforeend`);
-//renderComponent(`.films`, createFilmsListExtraTemplate(`Most commented`), `beforeend`);
+
+renderComponent(`.films-list .films-list__container`, allFilms.map(createCardTemplate).join(``), `beforeend`);
+
+renderComponent(`.films`, createFilmsListExtraTemplate(`Top rated`), `beforeend`);
+renderComponent(`.films`, createFilmsListExtraTemplate(`Most commented`), `beforeend`);
 renderComponent(`body`, createPopupTemplates(), `beforeend`);
 
-document.querySelector('.film-details').style.display = 'none';
+document.querySelector(`.film-details`).style.display = `none`;

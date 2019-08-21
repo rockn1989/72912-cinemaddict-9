@@ -1,12 +1,11 @@
-/* import {createTitleTemplates} from '../components/title.js';
+import {createTitleTemplates} from '../components/title.js';
 import {createCardTemplate} from '../components/card.js';
+import {getFilm} from './card-data.js';
 
 const CARDS_COUNT = 2;
 let cardsList = ``;
 
-for (let i = 0; i < CARDS_COUNT; i++) {
-  cardsList += createCardTemplate();
-}
+cardsList += new Array(CARDS_COUNT).fill(``).map(getFilm).map(createCardTemplate).join(``);
 
 const createFilmsListExtraTemplate = (titleName) => `<section class="films-list--extra">
   ${createTitleTemplates(titleName)}
@@ -16,4 +15,4 @@ const createFilmsListExtraTemplate = (titleName) => `<section class="films-list-
 </section>`;
 
 export {createFilmsListExtraTemplate};
- */
+
