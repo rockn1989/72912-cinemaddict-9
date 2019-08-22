@@ -1,4 +1,5 @@
 import {createSearchTemplate} from '../src/components/search.js';
+import {getUserStatus} from '../src/components/user-profile-data.js';
 import {createUserProfileTemplate} from '../src/components/user-profile.js';
 import {createSiteMenuTemplate} from '../src/components/site-menu.js';
 import {createSortTemplate} from '../src/components/sort.js';
@@ -21,25 +22,17 @@ const renderComponent = (container, component, position) => {
 const COUNT_FILMS = 8;
 const FILTERS = [`All films`, `Watchlist`, `History`, `Favorite`, `Stats`];
 const allFilms = [];
-const topRated = [];
-const mostCommented = [];
+let watchedFilms;
+let topRated;
+let mostCommented;
 
 for (let i = 0; i < COUNT_FILMS; i++) {
   allFilms.push(getFilm());
 }
 
-allFilms.filter(({rating}) => {
-  topRated.push(rating);
-}).sort((a, b) => b.charCodeAt(0) - a.charCodeAt(0));
-console.log(topRated)
-/* for (let i = 0; i < COUNT_FILMS; i++) {
-  topRated.push(getFilm());
-}
-
-for (let i = 0; i < COUNT_FILMS; i++) {
-  mostCommented.push(getFilm());
-}
- */
+topRated = allFilms.sort((a, b) => b.rating - a.rating).slice(0, 2);
+mostCommented = allFilms.sort((a, b) => b.commentsCount - a.commentsCount).slice(0, 2);
+watchedFilms = allFilms.filter(({hasWatched}) => hasWatched).length;
 
 const FILTER_DATA = FILTERS.map((filterName) => {
   let filterCount;
@@ -68,8 +61,16 @@ const FILTER_DATA = FILTERS.map((filterName) => {
   };
 });
 
+const test = new Map([
+  [`all`, false],
+  [`watch`, true],
+  [`history`, true],
+  [`favorites`, true],
+  [`stats`, false]
+]);
+
 renderComponent(`.header`, createSearchTemplate(), `beforeend`);
-renderComponent(`.header`, createUserProfileTemplate(), `beforeend`);
+renderComponent(`.header`, createUserProfileTemplate(getUserStatus(watchedFilms)), `beforeend`);
 renderComponent(`.main`, createSiteMenuTemplate(), `beforeend`);
 renderComponent(`.main`, createSortTemplate(), `beforeend`);
 renderComponent(`.main`, createFilmsWrapperTemplate(), `beforeend`);
@@ -77,11 +78,10 @@ renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
 renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true), `afterbegin`);
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
-
 renderComponent(`.films-list .films-list__container`, allFilms.map(createCardTemplate).join(``), `beforeend`);
 
-renderComponent(`.films`, createFilmsListExtraTemplate(`Top rated`), `beforeend`);
-renderComponent(`.films`, createFilmsListExtraTemplate(`Most commented`), `beforeend`);
+renderComponent(`.films`, createFilmsListExtraTemplate(topRated, `Top rated`), `beforeend`);
+renderComponent(`.films`, createFilmsListExtraTemplate(mostCommented, `Most commented`), `beforeend`);
 renderComponent(`body`, createPopupTemplates(), `beforeend`);
 
 document.querySelector(`.film-details`).style.display = `none`;

@@ -30,7 +30,7 @@ export const getFilm = () => ({
     `Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
     `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
   ][Math.floor(Math.random() * 3)],
-  rating: +(Math.random() * 10).toFixed(1),
+  rating: (Math.random() * 10).toFixed(1),
   dateRealease: Date.now() + Math.floor(Math.random() * 24) * 24 * 60 * 60 * 1000,
   duration: Date.now() + Math.floor(Math.random() * 24) * 60 * 60 * 1000,
   genre: [
