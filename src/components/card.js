@@ -1,4 +1,4 @@
-export const createCardTemplate = ({ title, rating, dateRealease, duration, genre, imgName, description, commentsCount, hasWatchlist, hasWatched, isFavorite }) => `<article class="film-card">
+export const createCardTemplate = ({title, rating, dateRealease, duration, genre, imgName, description, commentsCount, hasWatchlist, hasWatched, isFavorite}) => `<article class="film-card">
           <h3 class="film-card__title">${Array.from(title)[Math.floor(Math.random() * title.size)]}</h3>
           <p class="film-card__rating">${rating}</p>
           <p class="film-card__info">

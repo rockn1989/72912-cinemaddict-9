@@ -1,4 +1,5 @@
-export const createPopupTemplates = ({ title, imgName, description, rating, dateRelease, duration, genre, writers, actors, country }) => `<section class="film-details">
+const randomTitle = Math.random();
+export const createPopupTemplates = ({title, imgName, description, rating, dateRelease, duration, genre, writers, actors, country}) => `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="form-details__top-container">
       <div class="film-details__close">
@@ -14,8 +15,8 @@ export const createPopupTemplates = ({ title, imgName, description, rating, date
         <div class="film-details__info">
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
-              <h3 class="film-details__title">${Array.from(title)[Math.floor(Math.random() * title.size)]}</h3>
-              <p class="film-details__title-original">Original: ${Array.from(title)[Math.floor(Math.random() * title.size)]}</p>
+              <h3 class="film-details__title">${Array.from(title)[Math.floor(randomTitle * title.size)]}</h3>
+              <p class="film-details__title-original">Original: ${Array.from(title)[Math.floor(randomTitle * title.size)]}</p>
             </div>
 
             <div class="film-details__rating">
@@ -42,7 +43,7 @@ export const createPopupTemplates = ({ title, imgName, description, rating, date
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${new Date(duration).getHours()} h ${new Date(duration).getMinutes()} m</td>
+              <td class="film-details__cell">${new Date(duration).getHours()}h ${new Date(duration).getMinutes()}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
