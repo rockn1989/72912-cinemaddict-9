@@ -48,7 +48,7 @@ const FILTER_DATA = FILTERS.map((filterName) => {
   let filterCount;
   switch (filterName) {
     case `All films`:
-      filterCount = ``;
+      filterCount = allFilms.length;
       break;
     case `Watchlist`:
       filterCount = filterArray(allFilms, `hasWatchlist`).length;
