@@ -33,11 +33,8 @@ const MAX_FILMS = 5;
 const FILTERS = [`All films`, `Watchlist`, `History`, `Favorite`];
 const allFilms = [];
 const allComments = [];
-
-let watchedFilms;
-let watchedFilmsCount;
-let topRated;
-let mostCommented;
+const sortArray = (array, fieldName, arrayLength) => array.sort((a, b) => b[fieldName] - a[fieldName]).slice(0, arrayLength);
+const filterArray = (array, fieldName) => array.filter((el) => el[fieldName]);
 
 for (let i = 0; i < COUNT_FILMS; i++) {
   allFilms.push(getFilm());
@@ -47,18 +44,6 @@ for (let i = 0; i < COUNT_COMMENTS; i++) {
   allComments.push(getComment());
 }
 
-/* const sortArray = (({fieldName}, arrayLength) => {
-  const fieldName = fieldName;
-  console.log(fieldName)
-};
-
-sortArray(allFilms, rating) */
-
-topRated = allFilms.sort((a, b) => b.rating - a.rating).slice(0, 2);
-mostCommented = allFilms.sort((a, b) => b.commentsCount - a.commentsCount).slice(0, 2);
-watchedFilms = allFilms.filter(({hasWatched}) => hasWatched);
-watchedFilmsCount = allFilms.filter(({hasWatched}) => hasWatched).length;
-
 const FILTER_DATA = FILTERS.map((filterName) => {
   let filterCount;
   switch (filterName) {
@@ -66,13 +51,13 @@ const FILTER_DATA = FILTERS.map((filterName) => {
       filterCount = ``;
       break;
     case `Watchlist`:
-      filterCount = allFilms.filter(({hasWatchlist}) => hasWatchlist).length;
+      filterCount = filterArray(allFilms, `hasWatchlist`).length;
       break;
     case `History`:
-      filterCount = allFilms.filter(({hasWatched}) => hasWatched).length;
+      filterCount = filterArray(allFilms, `hasWatched`).length;
       break;
     case `Favorite`:
-      filterCount = allFilms.filter(({isFavorite}) => isFavorite).length;
+      filterCount = filterArray(allFilms, `isFavorite`).length;
       break;
     default:
       return 0;
@@ -85,7 +70,7 @@ const FILTER_DATA = FILTERS.map((filterName) => {
 });
 
 renderComponent(`.header`, createSearchTemplate(), `beforeend`);
-renderComponent(`.header`, createUserProfileTemplate(getUserStatus(watchedFilmsCount)), `beforeend`);
+renderComponent(`.header`, createUserProfileTemplate(getUserStatus(filterArray(allFilms, `hasWatched`).length)), `beforeend`);
 renderComponent(`.main`, createSiteMenuTemplate(), `beforeend`);
 renderComponent(`.main-navigation`, FILTER_DATA.map(createSiteMenuLink).join(``), `beforeend`);
 renderComponent(`.main-navigation`, createStatsBtnTemplate(), `beforeend`);
@@ -97,14 +82,13 @@ renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
 renderComponent(`.films-list .films-list__container`, allFilms.slice(0, MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
 
-renderComponent(`.films`, createFilmsListExtraTemplate(topRated, `Top rated`), `beforeend`);
-renderComponent(`.films`, createFilmsListExtraTemplate(mostCommented, `Most commented`), `beforeend`);
+renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `rating`, 2), `Top rated`), `beforeend`);
+renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `commentsCount`, 2), `Most commented`), `beforeend`);
 renderComponent(`body`, createPopupTemplates(getPopupData()), `beforeend`);
 renderComponent(`.film-details__inner`, createCommentsTemplates(allComments.length), `beforeend`);
 renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);
 renderComponent(`.film-details__comments-list`, allComments.map(createCommentTemplate).join(``), `beforeend`);
 
-document.querySelector(`.film-details`).style.display = `none`;
 const LOAD_MORE_BTN = document.querySelector(`.films-list__show-more`);
 
 const loadingFilm = (e) => {
