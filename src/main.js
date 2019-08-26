@@ -1,5 +1,5 @@
 import {createSearchTemplate} from '../src/components/search.js';
-import {getUserStatus} from '../src/components/user-profile-data.js';
+import {getUserStatus} from '../src/mocks/user-profile-data.js';
 import {createUserProfileTemplate} from '../src/components/user-profile.js';
 import {createSiteMenuTemplate} from '../src/components/site-menu.js';
 import {createSiteMenuLink} from '../src/components/site-menu-link.js';
@@ -10,11 +10,11 @@ import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
 import {createFilmsListTemplate} from '../src/components/films-list.js';
 import {createFilmsListExtraTemplate} from '../src/components/films-list-extra.js';
 
-import {getFilm} from '../src/components/card-data.js';
+import {getFilm} from '../src/mocks/card-data.js';
 import {createCardTemplate} from '../src/components/card.js';
 
-import {getPopupData} from '../src/components/popup-data.js';
-import {getComment} from '../src/components/comment-data.js';
+import {getPopupData} from '../src/mocks/popup-data.js';
+import {getComment} from '../src/mocks/comment-data.js';
 import {createPopupTemplates} from '../src/components/popup.js';
 import {createCommentsTemplates} from '../src/components/comments.js';
 import {createCommentTemplate} from '../src/components/comment.js';
@@ -46,6 +46,13 @@ for (let i = 0; i < COUNT_FILMS; i++) {
 for (let i = 0; i < COUNT_COMMENTS; i++) {
   allComments.push(getComment());
 }
+
+/* const sortArray = (({fieldName}, arrayLength) => {
+  const fieldName = fieldName;
+  console.log(fieldName)
+};
+
+sortArray(allFilms, rating) */
 
 topRated = allFilms.sort((a, b) => b.rating - a.rating).slice(0, 2);
 mostCommented = allFilms.sort((a, b) => b.commentsCount - a.commentsCount).slice(0, 2);
@@ -115,4 +122,4 @@ const loadingFilm = (e) => {
 };
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
-document.querySelector('.footer__statistics p').textContent = allFilms.length;
+document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
