@@ -107,3 +107,4 @@ const loadingFilm = (e) => {
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
+document.querySelector('.film-details').style.display = 'none';
