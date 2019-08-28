@@ -1,4 +1,4 @@
-import {RenderComponent} from '../src/components/utils.js';
+import {render} from '../src/components/utils.js';
 
 import {createSearchTemplate} from '../src/components/search.js';
 import {getUserStatus} from '../src/mocks/user-profile-data.js';
@@ -12,10 +12,10 @@ import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
 import {createFilmsListTemplate} from '../src/components/films-list.js';
 import {createFilmsListExtraTemplate} from '../src/components/films-list-extra.js';
 
-import {Card} from '../src/components/card-class.js';
+import {Card} from '../src/components/card.js';
 
 import {getFilm} from '../src/mocks/card-data.js';
-import {createCardTemplate} from '../src/components/card.js';
+//import {createCardTemplate} from '../src/components/card.js';
 
 import {getPopupData} from '../src/mocks/popup-data.js';
 import {getComment} from '../src/mocks/comment-data.js';
@@ -48,8 +48,6 @@ for (let i = 0; i < COUNT_COMMENTS; i++) {
   allComments.push(getComment());
 }
 
-//allFilms.map(new Card.getElement());
-
 const FILTER_DATA = FILTERS.map((filterName) => {
   let filterCount;
   switch (filterName) {
@@ -67,14 +65,14 @@ const FILTER_DATA = FILTERS.map((filterName) => {
       break;
     default:
       return 0;
-  }
+ }
   return {
     title: filterName,
     anchor: filterName.split(` `)[0].toLowerCase(),
     count: filterCount
-  };
+ };
 });
-allFilms.forEach((film) => console.log(typeof new Card(film).getTemplate()));
+//allFilms.forEach((film) => console.log(new Card(film).getElement()));
 renderComponent(`.header`, createSearchTemplate(), `beforeend`);
 renderComponent(`.header`, createUserProfileTemplate(getUserStatus(filterArray(allFilms, `hasWatched`).length)), `beforeend`);
 renderComponent(`.main`, createSiteMenuTemplate(), `beforeend`);
@@ -87,7 +85,10 @@ renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
 //renderComponent(`.films-list .films-list__container`, allFilms.slice(0, MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
-RenderComponent(`.films-list .films-list__container`, allFilms.map((film) => new Card(film).getTemplate()).join(``));
+//render(document.querySelector(`.films-list .films-list__container`), allFilms.map((film) => new Card(film).getElement()), `beforeend`);
+allFilms.slice(0, MAX_FILMS).forEach((film) => {
+  render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`)
+});
 renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `rating`, 2), `Top rated`), `beforeend`);
 renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `commentsCount`, 2), `Most commented`), `beforeend`);
 renderComponent(`body`, createPopupTemplates(getPopupData()), `beforeend`);
@@ -106,9 +107,9 @@ const loadingFilm = (e) => {
     renderComponent(`.films-list__container`, allFilms.slice(currentCountFilms, currentCountFilms + remainigFilms).map(createCardTemplate).join(``), `beforeend`);
     LOAD_MORE_BTN.removeEventListener(`click`, loadingFilm);
     LOAD_MORE_BTN.remove();
-  } else {
+ } else {
     renderComponent(`.films-list__container`, allFilms.slice(currentCountFilms, currentCountFilms + MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
-  }
+ }
 };
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);

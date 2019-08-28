@@ -1,18 +1,31 @@
+const Position = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
 const createElement = (template) => {
   const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
+  newElement.insertAdjacentHTML(`beforeend`, template);
   return newElement.firstChild;
 };
 
-const RenderComponent = (container, component) => {
-  document.querySelector(container).prepend(component);
+const render = (container, element, place) => {
+  const containerHTML = document.querySelector(container);
+  switch (place) {
+    case Position.AFTERBEGIN:
+      containerHTML.prepend(element);
+      break;
+    case Position.BEFOREEND:
+      containerHTML.append(element);
+      break;
+  }
 };
 
-const removeRenderComponent = (el) => {
+const unrender = (el) => {
   if (el) {
     el.removeElement();
     el.remove();
   }
 };
 
-export {createElement, RenderComponent, removeRenderComponent};
+export {createElement, render, unrender};

@@ -1,5 +1,3 @@
-import {createElement} from '../components/utils.js';
-
 export const getFilm = () => ({
   title: new Set([
     `Звездные войны`,

@@ -1,10 +1,15 @@
 import {createTitleTemplates} from '../components/title.js';
-import {createCardTemplate} from '../components/card.js';
+import {render} from '../components/utils.js';
+import {Card} from '../components/card.js';
 
-const createFilmsListExtraTemplate = (fildData, titleName) => `<section class="films-list--extra">
+const createFilmsListExtraTemplate = (filmdData, titleName) => `<section class="films-list--extra">
   ${createTitleTemplates(titleName)}
   <div class="films-list__container">
-    ${fildData.map(createCardTemplate).join(``)}
+    ${filmdData.forEach((film) => {
+      //console.log(new Card(film).getElement());
+      //render(`.films-list__container`, new Card(film).getElement(), `beforeend`);
+      new Card(film).getElement();
+    })}
   </div>
 </section>`;
 
