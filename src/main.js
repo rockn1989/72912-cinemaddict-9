@@ -1,3 +1,5 @@
+import {RenderComponent} from '../src/components/utils.js';
+
 import {createSearchTemplate} from '../src/components/search.js';
 import {getUserStatus} from '../src/mocks/user-profile-data.js';
 import {createUserProfileTemplate} from '../src/components/user-profile.js';
@@ -9,6 +11,8 @@ import {createSortTemplate} from '../src/components/sort.js';
 import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
 import {createFilmsListTemplate} from '../src/components/films-list.js';
 import {createFilmsListExtraTemplate} from '../src/components/films-list-extra.js';
+
+import {Card} from '../src/components/card-class.js';
 
 import {getFilm} from '../src/mocks/card-data.js';
 import {createCardTemplate} from '../src/components/card.js';
@@ -44,6 +48,8 @@ for (let i = 0; i < COUNT_COMMENTS; i++) {
   allComments.push(getComment());
 }
 
+//allFilms.map(new Card.getElement());
+
 const FILTER_DATA = FILTERS.map((filterName) => {
   let filterCount;
   switch (filterName) {
@@ -68,7 +74,7 @@ const FILTER_DATA = FILTERS.map((filterName) => {
     count: filterCount
   };
 });
-
+allFilms.forEach((film) => console.log(typeof new Card(film).getTemplate()));
 renderComponent(`.header`, createSearchTemplate(), `beforeend`);
 renderComponent(`.header`, createUserProfileTemplate(getUserStatus(filterArray(allFilms, `hasWatched`).length)), `beforeend`);
 renderComponent(`.main`, createSiteMenuTemplate(), `beforeend`);
@@ -80,8 +86,8 @@ renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
 renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true), `afterbegin`);
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
-renderComponent(`.films-list .films-list__container`, allFilms.slice(0, MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
-
+//renderComponent(`.films-list .films-list__container`, allFilms.slice(0, MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
+RenderComponent(`.films-list .films-list__container`, allFilms.map((film) => new Card(film).getTemplate()).join(``));
 renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `rating`, 2), `Top rated`), `beforeend`);
 renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `commentsCount`, 2), `Most commented`), `beforeend`);
 renderComponent(`body`, createPopupTemplates(getPopupData()), `beforeend`);
