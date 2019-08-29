@@ -65,14 +65,14 @@ const FILTER_DATA = FILTERS.map((filterName) => {
       break;
     default:
       return 0;
- }
+  }
   return {
     title: filterName,
     anchor: filterName.split(` `)[0].toLowerCase(),
     count: filterCount
- };
+  };
 });
-//allFilms.forEach((film) => console.log(new Card(film).getElement()));
+
 renderComponent(`.header`, createSearchTemplate(), `beforeend`);
 renderComponent(`.header`, createUserProfileTemplate(getUserStatus(filterArray(allFilms, `hasWatched`).length)), `beforeend`);
 renderComponent(`.main`, createSiteMenuTemplate(), `beforeend`);
@@ -84,13 +84,24 @@ renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
 renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true), `afterbegin`);
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
-//renderComponent(`.films-list .films-list__container`, allFilms.slice(0, MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
-//render(document.querySelector(`.films-list .films-list__container`), allFilms.map((film) => new Card(film).getElement()), `beforeend`);
 allFilms.slice(0, MAX_FILMS).forEach((film) => {
-  render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`)
+  render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
 });
 renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `rating`, 2), `Top rated`), `beforeend`);
 renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `commentsCount`, 2), `Most commented`), `beforeend`);
+/* renderComponent(`.films`, createFilmsListExtraTemplate(`Top rated`), `beforeend`);
+
+sortArray(allFilms, `rating`, 2).forEach((film) => {
+  render(`.films-list--extra .films-list__container`, new Card(film).getElement(), `beforeend`);
+});
+
+
+renderComponent(`.films`, createFilmsListExtraTemplate(`Most commented`), `beforeend`);
+
+sortArray(allFilms, `commentsCount`, 2).forEach((film) => {
+  render(`.films-list--extra .films-list__container`, new Card(film).getElement(), `beforeend`);
+}); */
+
 renderComponent(`body`, createPopupTemplates(getPopupData()), `beforeend`);
 renderComponent(`.film-details__inner`, createCommentsTemplates(allComments.length), `beforeend`);
 renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);
@@ -107,11 +118,11 @@ const loadingFilm = (e) => {
     renderComponent(`.films-list__container`, allFilms.slice(currentCountFilms, currentCountFilms + remainigFilms).map(createCardTemplate).join(``), `beforeend`);
     LOAD_MORE_BTN.removeEventListener(`click`, loadingFilm);
     LOAD_MORE_BTN.remove();
- } else {
+  } else {
     renderComponent(`.films-list__container`, allFilms.slice(currentCountFilms, currentCountFilms + MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
- }
+  }
 };
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
-document.querySelector('.film-details').style.display = 'none';
+document.querySelector(`.film-details`).style.display = `none`;
