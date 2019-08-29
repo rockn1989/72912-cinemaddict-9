@@ -1,4 +1,4 @@
-import { createElement } from '../components/utils.js';
+import {createElement} from '../components/utils.js';
 
 class Card {
   constructor({ title, rating, dateRealease, duration, genre, imgName, description, commentsCount, hasWatchlist, hasWatched, isFavorite }) {
@@ -49,4 +49,4 @@ class Card {
   }
 }
 
-export { Card };
+export {Card};
