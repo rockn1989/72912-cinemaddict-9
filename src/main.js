@@ -9,7 +9,7 @@ import {createStatsBtnTemplate} from '../src/components/stats-btn.js';
 
 import {createSortTemplate} from '../src/components/sort.js';
 import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
-import {createFilmsListTemplate} from '../src/components/films-list.js';
+import {FilmsList} from '../src/components/films-list.js';
 import {createFilmsListExtraTemplate} from '../src/components/films-list-extra.js';
 
 import {Card} from '../src/components/card.js';
@@ -80,29 +80,22 @@ renderComponent(`.main-navigation`, FILTER_DATA.map(createSiteMenuLink).join(``)
 renderComponent(`.main-navigation`, createStatsBtnTemplate(), `beforeend`);
 renderComponent(`.main`, createSortTemplate(), `beforeend`);
 renderComponent(`.main`, createFilmsWrapperTemplate(), `beforeend`);
-renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
+//renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
+
+render(`.films`, new FilmsList({}).getElement(), `beforeend`);
+
 renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true), `afterbegin`);
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
 allFilms.slice(0, MAX_FILMS).forEach((film) => {
   render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
 });
+
 render(`body`, new Popup(getPopupData()).getElement(), `beforeend`);
-renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `rating`, 2), `Top rated`), `beforeend`);
-renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `commentsCount`, 2), `Most commented`), `beforeend`);
-/* renderComponent(`.films`, createFilmsListExtraTemplate(`Top rated`), `beforeend`);
-
-sortArray(allFilms, `rating`, 2).forEach((film) => {
-  render(`.films-list--extra .films-list__container`, new Card(film).getElement(), `beforeend`);
-});
-
-
-renderComponent(`.films`, createFilmsListExtraTemplate(`Most commented`), `beforeend`);
-
-sortArray(allFilms, `commentsCount`, 2).forEach((film) => {
-  render(`.films-list--extra .films-list__container`, new Card(film).getElement(), `beforeend`);
-}); */
-
+render(`.films`, new FilmsList({title: `Top rated`, columns: 2}).getElement(), `beforeend`);
+render(`.films`, new FilmsList({title: `Most commented`, columns: 2}).getElement(), `beforeend`);
+//renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `rating`, 2), `Top rated`), `beforeend`);
+//renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `commentsCount`, 2), `Most commented`), `beforeend`);
 
 //renderComponent(`.film-details__inner`, createCommentsTemplates(allComments.length), `beforeend`);
 //renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);

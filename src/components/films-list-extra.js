@@ -7,6 +7,7 @@ const createFilmsListExtraTemplate = (filmdData, titleName) => `<section class="
   <div class="films-list__container">
   ${filmdData.map((film) => {
     console.log(new Card(film).getElement());
+    new Card(film).getElement();
   }).join(``)}
   </div>
 </section>`;

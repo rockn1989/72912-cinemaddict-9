@@ -1,7 +1,7 @@
 import {createElement} from '../components/utils.js';
 
-class Card {
-  constructor({ title, rating, dateRealease, duration, genre, imgName, description, commentsCount, hasWatchlist, hasWatched, isFavorite }) {
+export class Card {
+  constructor({title, rating, dateRealease, duration, genre, imgName, description, commentsCount, hasWatchlist, hasWatched, isFavorite}) {
     this._title = title;
     this._rating = rating;
     this._dateRealease = dateRealease;
@@ -48,5 +48,3 @@ class Card {
         </article > `;
   }
 }
-
-export {Card};
