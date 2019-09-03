@@ -82,14 +82,14 @@ renderComponent(`.main`, createSortTemplate(), `beforeend`);
 renderComponent(`.main`, createFilmsWrapperTemplate(), `beforeend`);
 //renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
 
-render(`.films`, new FilmsList({}).getElement(), `beforeend`);
+render(`.films`, new FilmsList({array: allFilms}).getElement(), `beforeend`);
 
 renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true), `afterbegin`);
 renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
 
-allFilms.slice(0, MAX_FILMS).forEach((film) => {
+/* allFilms.slice(0, MAX_FILMS).forEach((film) => {
   render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
-});
+}); */
 
 render(`body`, new Popup(getPopupData()).getElement(), `beforeend`);
 render(`.films`, new FilmsList({title: `Top rated`, columns: 2}).getElement(), `beforeend`);
