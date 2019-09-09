@@ -80,44 +80,62 @@ renderComponent(`.main-navigation`, FILTER_DATA.map(createSiteMenuLink).join(``)
 renderComponent(`.main-navigation`, createStatsBtnTemplate(), `beforeend`);
 renderComponent(`.main`, createSortTemplate(), `beforeend`);
 renderComponent(`.main`, createFilmsWrapperTemplate(), `beforeend`);
-//renderComponent(`.films`, createFilmsListTemplate(), `beforeend`);
 
-render(`.films`, new FilmsList({array: allFilms}).getElement(), `beforeend`);
+render(`.films`, new FilmsList({title: `All movies. Upcoming`}).getElement(), `beforeend`);
+render(`.films`, new FilmsList({title: `Top rated`, columns: 2 }).getElement(), `beforeend`);
+render(`.films`, new FilmsList({title: `Most commented`, columns: 2 }).getElement(), `beforeend`);
 
-renderComponent(`.films-list`, createTitleTemplates(`All movies. Upcoming`, true), `afterbegin`);
-renderComponent(`.films-list`, createShowMoreBtnTemplate(), `beforeend`);
+const filmsContainers = document.querySelectorAll('.films-list__container');
 
-/* allFilms.slice(0, MAX_FILMS).forEach((film) => {
-  render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
-}); */
+filmsContainers.forEach((container, i) => {
+  let films;
+  if(i === 0) {
+    films = allFilms.slice(0, MAX_FILMS).map((film) => {
+      return new Card(film).getElement();
+    });
+    container.append(...films);
+  } else if (i === 1) {
+    films = sortArray(allFilms, `rating`, 2).map((film) => {
+      return new Card(film).getElement();
+    });
+    container.append(...films);
+  } else if (i === 2) {
+    films = sortArray(allFilms, `commentsCount`, 2).map((film) => {
+      return new Card(film).getElement();
+    });
+    container.append(...films);
+  }
+});
+
 
 render(`body`, new Popup(getPopupData()).getElement(), `beforeend`);
-render(`.films`, new FilmsList({title: `Top rated`, columns: 2}).getElement(), `beforeend`);
-render(`.films`, new FilmsList({title: `Most commented`, columns: 2}).getElement(), `beforeend`);
-//renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `rating`, 2), `Top rated`), `beforeend`);
-//renderComponent(`.films`, createFilmsListExtraTemplate(sortArray(allFilms, `commentsCount`, 2), `Most commented`), `beforeend`);
 
-//renderComponent(`.film-details__inner`, createCommentsTemplates(allComments.length), `beforeend`);
-//renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);
-//renderComponent(`.film-details__comments-list`, allComments.map(createCommentTemplate).join(``), `beforeend`);
+renderComponent(`.film-details__inner`, createCommentsTemplates(allComments.length), `beforeend`);
+renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);
+renderComponent(`.film-details__comments-list`, allComments.map(createCommentTemplate).join(``), `beforeend`);
 
 const LOAD_MORE_BTN = document.querySelector(`.films-list__show-more`);
 
 const loadingFilm = (e) => {
   e.preventDefault();
   const currentCountFilms = document.querySelectorAll(`.films-list .films-list__container>.film-card`).length;
-  const remainigFilms = allFilms.slice(currentCountFilms, currentCountFilms + MAX_FILMS).length;
+  const remainingFilms = allFilms.slice(currentCountFilms, currentCountFilms + MAX_FILMS).length;
 
-  if (currentCountFilms + remainigFilms >= allFilms.length) {
-    renderComponent(`.films-list__container`, allFilms.slice(currentCountFilms, currentCountFilms + remainigFilms).map(createCardTemplate).join(``), `beforeend`);
+  if (currentCountFilms + remainingFilms >= allFilms.length) {
+    allFilms.slice(currentCountFilms, currentCountFilms + remainingFilms).map((film) => {
+      render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`)
+    });
+
     LOAD_MORE_BTN.removeEventListener(`click`, loadingFilm);
     LOAD_MORE_BTN.remove();
   } else {
-    renderComponent(`.films-list__container`, allFilms.slice(currentCountFilms, currentCountFilms + MAX_FILMS).map(createCardTemplate).join(``), `beforeend`);
+    allFilms.slice(currentCountFilms, currentCountFilms + MAX_FILMS).map((film) => {
+      render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
+    });
   }
 };
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
-document.querySelector(`.film-details`).style.display = `none`;
+//document.querySelector(`.film-details`).style.display = `none`;
 

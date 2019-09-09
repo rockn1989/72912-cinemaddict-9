@@ -27,11 +27,8 @@ import {Card} from '../components/card.js';
   getTemplate() {
     return `<section class="${this._columns > 1 ? `films-list--extra` : `films-list`}">
       ${this._title != `undefined` ? `<h2 class="films-list__title">${this._title}</h2>` : ``}
-      <div class="films-list__container">
-        ${this._filmsCard.forEach((film) => {
-          render(`.films-list__container`, new Card(film).getElement(), `beforeend`);// Не выводятся карточки фильмов
-        })}
-      </div>
+      <div class="films-list__container"></div>
+      ${this._columns === 1 ? `<button class="films-list__show-more">Show more</button>` : ``}
     </section>`;
   }
 }
