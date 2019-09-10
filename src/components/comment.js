@@ -1,6 +1,6 @@
 import {createElement} from '../components/utils.js';
 
-class Comment {
+export class Comment {
   constructor({img, text, author, date}) {
     this._img = img;
     this._text = text;
@@ -37,7 +37,7 @@ class Comment {
   }
 
 }
-
+/*
 export const createCommentTemplate = ({img, text, author, date}) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${img}" width="55" height="55" alt="emoji">
@@ -50,4 +50,4 @@ export const createCommentTemplate = ({img, text, author, date}) => `<li class="
                 <button class="film-details__comment-delete">Delete</button>
               </p>
             </div>
-          </li>`;
+          </li>`; */

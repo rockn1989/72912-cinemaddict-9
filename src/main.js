@@ -20,8 +20,8 @@ import {getFilm} from '../src/mocks/card-data.js';
 import {getPopupData} from '../src/mocks/popup-data.js';
 import {getComment} from '../src/mocks/comment-data.js';
 import {Popup} from '../src/components/popup.js';
-import {createCommentsTemplates} from '../src/components/comments.js';
-import {createCommentTemplate} from '../src/components/comment.js';
+import {CommentsList} from './components/comments-list.js';
+import {Comment} from '../src/components/comment.js';
 import {createNewComments} from '../src/components/comments-new.js';
 
 import {createTitleTemplates} from '../src/components/title.js';
@@ -82,16 +82,24 @@ renderComponent(`.main`, createSortTemplate(), `beforeend`);
 renderComponent(`.main`, createFilmsWrapperTemplate(), `beforeend`);
 
 render(`.films`, new FilmsList({title: `All movies. Upcoming`}).getElement(), `beforeend`);
-render(`.films`, new FilmsList({title: `Top rated`, columns: 2 }).getElement(), `beforeend`);
-render(`.films`, new FilmsList({title: `Most commented`, columns: 2 }).getElement(), `beforeend`);
+render(`.films`, new FilmsList({title: `Top rated`, columns: 2}).getElement(), `beforeend`);
+render(`.films`, new FilmsList({title: `Most commented`, columns: 2}).getElement(), `beforeend`);
 
-const filmsContainers = document.querySelectorAll('.films-list__container');
+const renderFilms = (filmMock, containerClassname) => {
+  const film = new Card(filmMock);
+  //const popup = new Popup(filmMock);
+
+  render(`.${containerClassname}`, film.getElement(), `beforeend`);
+  //render(`body`, popup.getElement(), `beforeend`);
+};
+
+const filmsContainers = document.querySelectorAll(`.films-list__container`);
 
 filmsContainers.forEach((container, i) => {
   let films;
-  if(i === 0) {
+  if (i === 0) {
     films = allFilms.slice(0, MAX_FILMS).map((film) => {
-      return new Card(film).getElement();
+      renderFilms(film, container.className)
     });
     container.append(...films);
   } else if (i === 1) {
@@ -109,10 +117,12 @@ filmsContainers.forEach((container, i) => {
 
 
 render(`body`, new Popup(getPopupData()).getElement(), `beforeend`);
+render(`.film-details__inner`, new CommentsList(allComments.length).getElement(), `beforeend`);
+allComments.map((comment) => {
+  render(`.film-details__comments-list`, new Comment(comment).getElement(), `beforeend`)
+});
 
-renderComponent(`.film-details__inner`, createCommentsTemplates(allComments.length), `beforeend`);
 renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);
-renderComponent(`.film-details__comments-list`, allComments.map(createCommentTemplate).join(``), `beforeend`);
 
 const LOAD_MORE_BTN = document.querySelector(`.films-list__show-more`);
 
@@ -137,5 +147,5 @@ const loadingFilm = (e) => {
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
-//document.querySelector(`.film-details`).style.display = `none`;
+document.querySelector(`.film-details`).style.display = `none`;
 
