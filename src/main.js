@@ -1,4 +1,4 @@
-import {render} from '../src/components/utils.js';
+import {render, renderAppend} from '../src/components/utils.js';
 
 import {createSearchTemplate} from '../src/components/search.js';
 import {getUserStatus} from '../src/mocks/user-profile-data.js';
@@ -10,12 +10,10 @@ import {createStatsBtnTemplate} from '../src/components/stats-btn.js';
 import {createSortTemplate} from '../src/components/sort.js';
 import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
 import {FilmsList} from '../src/components/films-list.js';
-import {createFilmsListExtraTemplate} from '../src/components/films-list-extra.js';
 
 import {Card} from '../src/components/card.js';
 
 import {getFilm} from '../src/mocks/card-data.js';
-//import {createCardTemplate} from '../src/components/card.js';
 
 import {getPopupData} from '../src/mocks/popup-data.js';
 import {getComment} from '../src/mocks/comment-data.js';
@@ -24,8 +22,6 @@ import {CommentsList} from './components/comments-list.js';
 import {Comment} from '../src/components/comment.js';
 import {createNewComments} from '../src/components/comments-new.js';
 
-import {createTitleTemplates} from '../src/components/title.js';
-import {createShowMoreBtnTemplate} from '../src/components/show-more-btn.js';
 
 const renderComponent = (container, component, position) => {
   document.querySelector(container).insertAdjacentHTML(position, component);
@@ -85,12 +81,31 @@ render(`.films`, new FilmsList({title: `All movies. Upcoming`}).getElement(), `b
 render(`.films`, new FilmsList({title: `Top rated`, columns: 2}).getElement(), `beforeend`);
 render(`.films`, new FilmsList({title: `Most commented`, columns: 2}).getElement(), `beforeend`);
 
-const renderFilms = (filmMock, containerClassname) => {
+const renderFilms = (filmMock, containerIdx) => {
   const film = new Card(filmMock);
-  //const popup = new Popup(filmMock);
+  const popup = new Popup(getPopupData());
+  const showModal = function (evt) {
+    evt.preventDefault();
+    const card = this.parentNode;
+    const cardWrapper = this.parentNode.parentNode;
+    const cardIdx = [...cardWrapper.querySelectorAll('.film-card')].indexOf(card);
 
-  render(`.${containerClassname}`, film.getElement(), `beforeend`);
-  //render(`body`, popup.getElement(), `beforeend`);
+    [...document.querySelectorAll('.film-details')][cardIdx].style.display = `block`;
+
+  };
+
+  film.getElement()
+    .querySelector(`.film-card__title`)
+    .addEventListener(`click`, showModal);
+  film.getElement()
+    .querySelector(`.film-card__poster`)
+    .addEventListener(`click`, showModal);
+  film.getElement()
+    .querySelector(`.film-card__comments`)
+    .addEventListener(`click`, showModal);
+
+  renderAppend(filmsContainers[containerIdx], film.getElement(), `beforeend`);
+  render(`body`, popup.getElement(), `beforeend`);
 };
 
 const filmsContainers = document.querySelectorAll(`.films-list__container`);
@@ -98,20 +113,17 @@ const filmsContainers = document.querySelectorAll(`.films-list__container`);
 filmsContainers.forEach((container, i) => {
   let films;
   if (i === 0) {
-    films = allFilms.slice(0, MAX_FILMS).map((film) => {
-      renderFilms(film, container.className)
+    allFilms.slice(0, MAX_FILMS).map((film) => {
+      renderFilms(film, i);
     });
-    container.append(...films);
   } else if (i === 1) {
-    films = sortArray(allFilms, `rating`, 2).map((film) => {
-      return new Card(film).getElement();
+    sortArray(allFilms, `rating`, 2).map((film) => {
+      renderFilms(film, i);
     });
-    container.append(...films);
   } else if (i === 2) {
-    films = sortArray(allFilms, `commentsCount`, 2).map((film) => {
-      return new Card(film).getElement();
+    sortArray(allFilms, `commentsCount`, 2).map((film) => {
+      renderFilms(film, i);
     });
-    container.append(...films);
   }
 });
 
@@ -147,5 +159,7 @@ const loadingFilm = (e) => {
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
-document.querySelector(`.film-details`).style.display = `none`;
+document.querySelectorAll(`.film-details`).forEach((popup) => {
+  popup.style.display = `none`;
+});
 

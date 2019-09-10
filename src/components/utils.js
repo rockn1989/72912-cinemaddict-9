@@ -21,6 +21,17 @@ const render = (container, element, place) => {
   }
 };
 
+const renderAppend = (container, element, place) => {
+  switch (place) {
+    case Position.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case Position.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
 const unrender = (el) => {
   if (el) {
     el.removeElement();
@@ -28,4 +39,4 @@ const unrender = (el) => {
   }
 };
 
-export {createElement, render, unrender};
+export {createElement, render, unrender, renderAppend};
