@@ -1,4 +1,4 @@
-import { createElement } from './utils.js';
+import {createElement} from './utils.js';
 
 export class CommentsList {
   constructor(commentsCount) {

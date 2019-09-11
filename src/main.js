@@ -84,14 +84,23 @@ render(`.films`, new FilmsList({title: `Most commented`, columns: 2}).getElement
 const renderFilms = (filmMock, containerIdx) => {
   const film = new Card(filmMock);
   const popup = new Popup(getPopupData());
+
   const showModal = function (evt) {
     evt.preventDefault();
-    const card = this.parentNode;
-    const cardWrapper = this.parentNode.parentNode;
-    const cardIdx = [...cardWrapper.querySelectorAll('.film-card')].indexOf(card);
 
-    [...document.querySelectorAll('.film-details')][cardIdx].style.display = `block`;
+    const card = evt.target.parentNode;
+    const cardWrapper = evt.target.parentNode.parentNode;
+    const cardIdx = [...cardWrapper.querySelectorAll(`.film-card`)].indexOf(card);
 
+    [...document.querySelectorAll(`.film-details`)][cardIdx].style.display = `block`;
+    [...document.querySelectorAll(`.film-details`)][cardIdx].classList.add(`visible`);
+  };
+
+  const hiddenModal = function (evt) {
+    if (evt.key === `Escape` || evt.key === `Esc` || evt.target.nodeName === `BUTTON`) {
+      document.querySelector(`.film-details.visible`).style.display = `none`;
+      document.querySelector(`.film-details.visible`).classList.remove(`visible`);
+    }
   };
 
   film.getElement()
@@ -104,6 +113,12 @@ const renderFilms = (filmMock, containerIdx) => {
     .querySelector(`.film-card__comments`)
     .addEventListener(`click`, showModal);
 
+  popup.getElement()
+    .querySelector(`.film-details__close-btn`)
+    .addEventListener(`click`, hiddenModal);
+
+  document.querySelector(`body`).addEventListener(`keydown`, hiddenModal);
+
   renderAppend(filmsContainers[containerIdx], film.getElement(), `beforeend`);
   render(`body`, popup.getElement(), `beforeend`);
 };
@@ -111,7 +126,6 @@ const renderFilms = (filmMock, containerIdx) => {
 const filmsContainers = document.querySelectorAll(`.films-list__container`);
 
 filmsContainers.forEach((container, i) => {
-  let films;
   if (i === 0) {
     allFilms.slice(0, MAX_FILMS).map((film) => {
       renderFilms(film, i);
@@ -130,11 +144,13 @@ filmsContainers.forEach((container, i) => {
 
 render(`body`, new Popup(getPopupData()).getElement(), `beforeend`);
 render(`.film-details__inner`, new CommentsList(allComments.length).getElement(), `beforeend`);
+
 allComments.map((comment) => {
-  render(`.film-details__comments-list`, new Comment(comment).getElement(), `beforeend`)
+  render(`.film-details__comments-list`, new Comment(comment).getElement(), `beforeend`);
 });
 
 renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);
+
 
 const LOAD_MORE_BTN = document.querySelector(`.films-list__show-more`);
 
@@ -145,7 +161,7 @@ const loadingFilm = (e) => {
 
   if (currentCountFilms + remainingFilms >= allFilms.length) {
     allFilms.slice(currentCountFilms, currentCountFilms + remainingFilms).map((film) => {
-      render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`)
+      render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
     });
 
     LOAD_MORE_BTN.removeEventListener(`click`, loadingFilm);
