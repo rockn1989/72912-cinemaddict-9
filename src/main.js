@@ -12,15 +12,13 @@ import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
 import {FilmsList} from '../src/components/films-list.js';
 
 import {Card} from '../src/components/card.js';
-
 import {getFilm} from '../src/mocks/card-data.js';
-
 import {getPopupData} from '../src/mocks/popup-data.js';
 import {getComment} from '../src/mocks/comment-data.js';
 import {Popup} from '../src/components/popup.js';
 import {CommentsList} from './components/comments-list.js';
 import {Comment} from '../src/components/comment.js';
-import {createNewComments} from '../src/components/comments-new.js';
+import {CommentsNew} from '../src/components/comments-new.js';
 
 
 const renderComponent = (container, component, position) => {
@@ -81,6 +79,7 @@ render(`.films`, new FilmsList({title: `All movies. Upcoming`}).getElement(), `b
 render(`.films`, new FilmsList({title: `Top rated`, columns: 2}).getElement(), `beforeend`);
 render(`.films`, new FilmsList({title: `Most commented`, columns: 2}).getElement(), `beforeend`);
 
+
 const renderFilms = (filmMock, containerIdx) => {
   const film = new Card(filmMock);
   const popup = new Popup(getPopupData());
@@ -94,12 +93,14 @@ const renderFilms = (filmMock, containerIdx) => {
 
     [...document.querySelectorAll(`.film-details`)][cardIdx].style.display = `block`;
     [...document.querySelectorAll(`.film-details`)][cardIdx].classList.add(`visible`);
+    document.querySelector(`body`).addEventListener(`keydown`, hiddenModal);
   };
 
   const hiddenModal = function (evt) {
-    if (evt.key === `Escape` || evt.key === `Esc` || evt.target.nodeName === `BUTTON`) {
+    if (evt.key === `Escape` || evt.key === `Esc` || evt.target.className === `film-details__close-btn`) {
       document.querySelector(`.film-details.visible`).style.display = `none`;
       document.querySelector(`.film-details.visible`).classList.remove(`visible`);
+      document.querySelector(`body`).removeEventListener(`keydown`, hiddenModal);
     }
   };
 
@@ -117,10 +118,17 @@ const renderFilms = (filmMock, containerIdx) => {
     .querySelector(`.film-details__close-btn`)
     .addEventListener(`click`, hiddenModal);
 
-  document.querySelector(`body`).addEventListener(`keydown`, hiddenModal);
+  renderAppend(popup.getElement().querySelector(`.film-details__inner`), new CommentsList(allComments.length).getElement(), `beforeend`);
+
+  allComments.map((comment) => {
+    renderAppend(popup.getElement().querySelector(`.film-details__comments-list`), new Comment(comment).getElement(), `beforeend`);
+  });
+
+  renderAppend(popup.getElement().querySelector(`.film-details__comments-wrap`), new CommentsNew().getElement(), `beforeend`);
 
   renderAppend(filmsContainers[containerIdx], film.getElement(), `beforeend`);
   render(`body`, popup.getElement(), `beforeend`);
+  popup.getElement().style.display = `none`;
 };
 
 const filmsContainers = document.querySelectorAll(`.films-list__container`);
@@ -142,16 +150,6 @@ filmsContainers.forEach((container, i) => {
 });
 
 
-render(`body`, new Popup(getPopupData()).getElement(), `beforeend`);
-render(`.film-details__inner`, new CommentsList(allComments.length).getElement(), `beforeend`);
-
-allComments.map((comment) => {
-  render(`.film-details__comments-list`, new Comment(comment).getElement(), `beforeend`);
-});
-
-renderComponent(`.film-details__comments-wrap`, createNewComments(), `beforeend`);
-
-
 const LOAD_MORE_BTN = document.querySelector(`.films-list__show-more`);
 
 const loadingFilm = (e) => {
@@ -161,7 +159,7 @@ const loadingFilm = (e) => {
 
   if (currentCountFilms + remainingFilms >= allFilms.length) {
     allFilms.slice(currentCountFilms, currentCountFilms + remainingFilms).map((film) => {
-      render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
+      return renderFilms(film, 0);
     });
 
     LOAD_MORE_BTN.removeEventListener(`click`, loadingFilm);
@@ -175,7 +173,5 @@ const loadingFilm = (e) => {
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
-document.querySelectorAll(`.film-details`).forEach((popup) => {
-  popup.style.display = `none`;
-});
+
 
