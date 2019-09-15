@@ -1,7 +1,8 @@
-import {createElement} from '../components/utils.js';
+import {AbstractComponent} from '../components/abstract-component.js';
 
-export class Card {
+export class Card extends AbstractComponent {
   constructor({title, rating, dateRealease, duration, genre, imgName, description, commentsCount, hasWatchlist, hasWatched, isFavorite}) {
+    super();
     this._title = title;
     this._rating = rating;
     this._dateRealease = dateRealease;
@@ -13,19 +14,6 @@ export class Card {
     this._hasWatchlist = hasWatchlist;
     this._hasWatched = hasWatched;
     this._isFavorite = isFavorite;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

@@ -1,22 +1,11 @@
-import {createElement} from '../components/utils.js';
+import {AbstractComponent} from '../components/abstract-component.js';
 
-export class FilmsList {
+export class FilmsList extends AbstractComponent {
   constructor({title, columns, array}) {
+    super();
     this._title = title || `undefined`;
     this._columns = columns || 1;
     this._filmsCard = array || [];
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

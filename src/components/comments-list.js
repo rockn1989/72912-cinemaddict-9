@@ -1,20 +1,9 @@
-import {createElement} from './utils.js';
+import {AbstractComponent} from '../components/abstract-component.js';
 
-export class CommentsList {
+export class CommentsList extends AbstractComponent {
   constructor(commentsCount) {
+    super();
     this._commentsCount = commentsCount;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

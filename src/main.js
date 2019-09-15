@@ -1,4 +1,5 @@
 import {render, renderAppend} from '../src/components/utils.js';
+import {PageController} from '../src/components/pagecontroller.js';
 
 import {createSearchTemplate} from '../src/components/search.js';
 import {getUserStatus} from '../src/mocks/user-profile-data.js';
@@ -20,6 +21,7 @@ import {CommentsList} from './components/comments-list.js';
 import {Comment} from '../src/components/comment.js';
 import {CommentsNew} from '../src/components/comments-new.js';
 
+console.log(new PageController());
 
 const renderComponent = (container, component, position) => {
   document.querySelector(container).insertAdjacentHTML(position, component);
@@ -173,5 +175,3 @@ const loadingFilm = (e) => {
 
 LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;
-
-
