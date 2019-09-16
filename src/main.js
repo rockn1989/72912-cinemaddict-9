@@ -1,15 +1,14 @@
 import {render, renderAppend} from '../src/components/utils.js';
 import {PageController} from '../src/components/pagecontroller.js';
 
-import {createSearchTemplate} from '../src/components/search.js';
+import {Search} from '../src/components/search.js';
 import {getUserStatus} from '../src/mocks/user-profile-data.js';
-import {createUserProfileTemplate} from '../src/components/user-profile.js';
-import {createSiteMenuTemplate} from '../src/components/site-menu.js';
-import {createSiteMenuLink} from '../src/components/site-menu-link.js';
-import {createStatsBtnTemplate} from '../src/components/stats-btn.js';
+import {UserProfile} from '../src/components/user-profile.js';
+import {MenuWrapper} from '../src/components/site-menu.js';
+import {Link} from '../src/components/site-menu-link.js';
 
-import {createSortTemplate} from '../src/components/sort.js';
-import {createFilmsWrapperTemplate} from '../src/components/films-wrapper.js';
+import {Sort} from '../src/components/sort.js';
+import {FilmsSection} from '../src/components/films-wrapper.js';
 import {FilmsList} from '../src/components/films-list.js';
 
 import {Card} from '../src/components/card.js';
@@ -21,16 +20,13 @@ import {CommentsList} from './components/comments-list.js';
 import {Comment} from '../src/components/comment.js';
 import {CommentsNew} from '../src/components/comments-new.js';
 
-console.log(new PageController());
-
-const renderComponent = (container, component, position) => {
-  document.querySelector(container).insertAdjacentHTML(position, component);
-};
+const controller = new PageController();
+controller.init();
 
 const COUNT_FILMS = 8;
 const COUNT_COMMENTS = 4;
 const MAX_FILMS = 5;
-const FILTERS = [`All films`, `Watchlist`, `History`, `Favorite`];
+const FILTERS = [`All films`, `Watchlist`, `History`, `Favorite`, `Stats`];
 const allFilms = [];
 const allComments = [];
 const sortArray = (array, fieldName, arrayLength) => array.sort((a, b) => b[fieldName] - a[fieldName]).slice(0, arrayLength);
@@ -59,6 +55,9 @@ const FILTER_DATA = FILTERS.map((filterName) => {
     case `Favorite`:
       filterCount = filterArray(allFilms, `isFavorite`).length;
       break;
+    case `Stats`:
+      filterCount = null;
+      break;
     default:
       return 0;
   }
@@ -69,15 +68,19 @@ const FILTER_DATA = FILTERS.map((filterName) => {
   };
 });
 
-renderComponent(`.header`, createSearchTemplate(), `beforeend`);
-renderComponent(`.header`, createUserProfileTemplate(getUserStatus(filterArray(allFilms, `hasWatched`).length)), `beforeend`);
-renderComponent(`.main`, createSiteMenuTemplate(), `beforeend`);
-renderComponent(`.main-navigation`, FILTER_DATA.map(createSiteMenuLink).join(``), `beforeend`);
-renderComponent(`.main-navigation`, createStatsBtnTemplate(), `beforeend`);
-renderComponent(`.main`, createSortTemplate(), `beforeend`);
-renderComponent(`.main`, createFilmsWrapperTemplate(), `beforeend`);
+render(`.header`, new Search().getElement(), `beforeend`);
+render(`.header`, new UserProfile(getUserStatus(filterArray(allFilms, `hasWatched`).length)).getElement(), `beforeend`);
+render(`.main`, new MenuWrapper().getElement(), `beforeend`);
 
-render(`.films`, new FilmsList({title: `All movies. Upcoming`}).getElement(), `beforeend`);
+FILTER_DATA.map((link) => {
+  render(`.main-navigation`, new Link(link).getElement(), `beforeend`);
+});
+
+render(`.main`, new Sort().getElement(), `beforeend`);
+
+render(`.main`, new FilmsSection().getElement(), `beforeend`);
+
+render(`.films`, new FilmsList({title: `All movies. Upcoming`, isHidden: true}).getElement(), `beforeend`);
 render(`.films`, new FilmsList({title: `Top rated`, columns: 2}).getElement(), `beforeend`);
 render(`.films`, new FilmsList({title: `Most commented`, columns: 2}).getElement(), `beforeend`);
 
