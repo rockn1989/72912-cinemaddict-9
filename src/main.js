@@ -1,12 +1,6 @@
 import {render, renderAppend} from '../src/components/utils.js';
 import {PageController} from '../src/components/pagecontroller.js';
 
-import {Search} from '../src/components/search.js';
-import {getUserStatus} from '../src/mocks/user-profile-data.js';
-import {UserProfile} from '../src/components/user-profile.js';
-import {MenuWrapper} from '../src/components/site-menu.js';
-import {Link} from '../src/components/site-menu-link.js';
-
 import {Sort} from '../src/components/sort.js';
 import {FilmsSection} from '../src/components/films-wrapper.js';
 import {FilmsList} from '../src/components/films-list.js';
@@ -20,17 +14,13 @@ import {CommentsList} from './components/comments-list.js';
 import {Comment} from '../src/components/comment.js';
 import {CommentsNew} from '../src/components/comments-new.js';
 
-const controller = new PageController();
-controller.init();
 
 const COUNT_FILMS = 8;
 const COUNT_COMMENTS = 4;
 const MAX_FILMS = 5;
-const FILTERS = [`All films`, `Watchlist`, `History`, `Favorite`, `Stats`];
 const allFilms = [];
 const allComments = [];
 const sortArray = (array, fieldName, arrayLength) => array.sort((a, b) => b[fieldName] - a[fieldName]).slice(0, arrayLength);
-const filterArray = (array, fieldName) => array.filter((el) => el[fieldName]);
 
 for (let i = 0; i < COUNT_FILMS; i++) {
   allFilms.push(getFilm());
@@ -40,41 +30,9 @@ for (let i = 0; i < COUNT_COMMENTS; i++) {
   allComments.push(getComment());
 }
 
-const FILTER_DATA = FILTERS.map((filterName) => {
-  let filterCount;
-  switch (filterName) {
-    case `All films`:
-      filterCount = allFilms.length;
-      break;
-    case `Watchlist`:
-      filterCount = filterArray(allFilms, `hasWatchlist`).length;
-      break;
-    case `History`:
-      filterCount = filterArray(allFilms, `hasWatched`).length;
-      break;
-    case `Favorite`:
-      filterCount = filterArray(allFilms, `isFavorite`).length;
-      break;
-    case `Stats`:
-      filterCount = null;
-      break;
-    default:
-      return 0;
-  }
-  return {
-    title: filterName,
-    anchor: filterName.split(` `)[0].toLowerCase(),
-    count: filterCount
-  };
-});
+const controller = new PageController(document.querySelector(`.main`), { films: allFilms, comments: allComments });
+controller.init();
 
-render(`.header`, new Search().getElement(), `beforeend`);
-render(`.header`, new UserProfile(getUserStatus(filterArray(allFilms, `hasWatched`).length)).getElement(), `beforeend`);
-render(`.main`, new MenuWrapper().getElement(), `beforeend`);
-
-FILTER_DATA.map((link) => {
-  render(`.main-navigation`, new Link(link).getElement(), `beforeend`);
-});
 
 render(`.main`, new Sort().getElement(), `beforeend`);
 
@@ -92,21 +50,24 @@ const renderFilms = (filmMock, containerIdx) => {
   const showModal = function (evt) {
     evt.preventDefault();
 
-    const card = evt.target.parentNode;
-    const cardWrapper = evt.target.parentNode.parentNode;
-    const cardIdx = [...cardWrapper.querySelectorAll(`.film-card`)].indexOf(card);
+    popup.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, hiddenModal);
 
-    [...document.querySelectorAll(`.film-details`)][cardIdx].style.display = `block`;
-    [...document.querySelectorAll(`.film-details`)][cardIdx].classList.add(`visible`);
+    popup.getElement().style.display = `block`;
+    popup.getElement().classList.add(`visible`);
     document.querySelector(`body`).addEventListener(`keydown`, hiddenModal);
   };
 
   const hiddenModal = function (evt) {
     if (evt.key === `Escape` || evt.key === `Esc` || evt.target.className === `film-details__close-btn`) {
-      document.querySelector(`.film-details.visible`).style.display = `none`;
-      document.querySelector(`.film-details.visible`).classList.remove(`visible`);
+      popup.getElement().style.display = `none`;
+      popup.getElement().classList.remove(`visible`);
       document.querySelector(`body`).removeEventListener(`keydown`, hiddenModal);
     }
+    popup.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .removeEventListener(`click`, hiddenModal);
   };
 
   film.getElement()
@@ -119,39 +80,33 @@ const renderFilms = (filmMock, containerIdx) => {
     .querySelector(`.film-card__comments`)
     .addEventListener(`click`, showModal);
 
-  popup.getElement()
-    .querySelector(`.film-details__close-btn`)
-    .addEventListener(`click`, hiddenModal);
-
   renderAppend(popup.getElement().querySelector(`.film-details__inner`), new CommentsList(allComments.length).getElement(), `beforeend`);
 
-  allComments.map((comment) => {
+  allComments.forEach((comment) => {
     renderAppend(popup.getElement().querySelector(`.film-details__comments-list`), new Comment(comment).getElement(), `beforeend`);
   });
 
   renderAppend(popup.getElement().querySelector(`.film-details__comments-wrap`), new CommentsNew().getElement(), `beforeend`);
 
   renderAppend(filmsContainers[containerIdx], film.getElement(), `beforeend`);
+
   render(`body`, popup.getElement(), `beforeend`);
+
   popup.getElement().style.display = `none`;
 };
 
 const filmsContainers = document.querySelectorAll(`.films-list__container`);
 
-filmsContainers.forEach((container, i) => {
-  if (i === 0) {
-    allFilms.slice(0, MAX_FILMS).map((film) => {
-      renderFilms(film, i);
-    });
-  } else if (i === 1) {
-    sortArray(allFilms, `rating`, 2).map((film) => {
-      renderFilms(film, i);
-    });
-  } else if (i === 2) {
-    sortArray(allFilms, `commentsCount`, 2).map((film) => {
-      renderFilms(film, i);
-    });
-  }
+allFilms.slice(0, MAX_FILMS).map((film) => {
+  renderFilms(film, 0);
+});
+
+sortArray(allFilms, `rating`, 2).map((film) => {
+  renderFilms(film, 1);
+});
+
+sortArray(allFilms, `commentsCount`, 2).map((film) => {
+  renderFilms(film, 2);
 });
 
 
