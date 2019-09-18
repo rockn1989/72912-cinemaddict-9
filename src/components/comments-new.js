@@ -1,9 +1,6 @@
 import {AbstractComponent} from '../components/abstract-component.js';
 
 export class CommentsNew extends AbstractComponent {
-  constructor() {
-    super();
-  }
 
   getTemplate() {
     return `<div class="film-details__new-comment">
