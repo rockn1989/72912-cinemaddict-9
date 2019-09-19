@@ -1,4 +1,3 @@
-import {render, renderAppend} from '../components/utils.js';
 import {Search} from './search.js';
 import {getUserStatus} from '../mocks/user-profile-data.js';
 import {UserProfile} from './user-profile.js';
@@ -116,17 +115,15 @@ export class PageController {
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, showModal);
 
-    renderAppend(popup.getElement().querySelector(`.film-details__inner`), new CommentsList(this._comments.length).getElement(), `beforeend`);
+    popup.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());
 
     this._comments.forEach((comment) => {
-      renderAppend(popup.getElement().querySelector(`.film-details__comments-list`), new Comment(comment).getElement(), `beforeend`);
+      popup.getElement().querySelector(`.film-details__comments-list`).append(new Comment(comment).getElement());
     });
+    popup.getElement().querySelector(`.film-details__comments-wrap`).append(new CommentsNew().getElement());
 
-    renderAppend(popup.getElement().querySelector(`.film-details__comments-wrap`), new CommentsNew().getElement(), `beforeend`);
-
-    renderAppend(filmsContainers[containerIdx], film.getElement(), `beforeend`);
-
-    render(`body`, popup.getElement(), `beforeend`);
+    filmsContainers[containerIdx].append(film.getElement());
+    this._container.append(popup.getElement());
 
     popup.getElement().style.display = `none`;
   }
@@ -158,7 +155,7 @@ export class PageController {
         LOAD_MORE_BTN.remove();
       } else {
         this._films.slice(currentCountFilms, currentCountFilms + MAX_FILMS).map((film) => {
-          render(`.films-list .films-list__container`, new Card(film).getElement(), `beforeend`);
+          this._container.querySelector(`.films-list .films-list__container`).append(this._getData(film));
         });
       }
     };
