@@ -1,21 +1,6 @@
-import {createElement} from '../components/utils.js';
+import {AbstractComponent} from '../components/abstract-component.js';
 
-export class CommentsNew {
-  constructor() {
-
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
+export class CommentsNew extends AbstractComponent {
 
   getTemplate() {
     return `<div class="film-details__new-comment">

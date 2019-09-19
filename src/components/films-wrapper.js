@@ -1,1 +1,7 @@
-export const createFilmsWrapperTemplate = () => `<section class="films"></div>`;
+import {AbstractComponent} from '../components/abstract-component.js';
+
+export class FilmsSection extends AbstractComponent {
+  getTemplate() {
+    return `<section class="films"></div>`;
+  }
+}
