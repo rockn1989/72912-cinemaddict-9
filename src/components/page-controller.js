@@ -23,6 +23,11 @@ export class PageController {
     this._filters = [`All films`, `Watchlist`, `History`, `Favorite`, `Stats`];
   }
 
+  _onDataChange(newData, oldData) {
+    this._films[this._films.findIndex((it) => it === oldData)] = newData;
+    this._renderFilms(this._films);
+  }
+
   _renderStatic() {
     this._headerContainer.append(new Search().getElement());
     this._headerContainer.append(new UserProfile(getUserStatus(this._films.filter(({hasWatched}) => hasWatched).length)).getElement());
@@ -69,10 +74,10 @@ export class PageController {
     });
   }
 
-  _renderFilms() {
+  _renderFilms(filmsData) {
     const MAX_RENDER_FILMS = 5;
 
-    this._films.slice(0, MAX_RENDER_FILMS).map((firstFilm) => {
+    filmsData.slice(0, MAX_RENDER_FILMS).map((firstFilm) => {
       this._getData(firstFilm, 0);
     });
   }
@@ -166,7 +171,7 @@ export class PageController {
   init() {
     this._renderStatic();
     this._renderFilters();
-    this._renderFilms();
+    this._renderFilms(this._films);
     this._renderSettingsFilms();
     this._loadingFilm();
   }
