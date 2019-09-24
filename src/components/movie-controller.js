@@ -1,56 +1,78 @@
-import {AbstractComponent} from "./abstract-component";
 import {Popup} from "./popup";
 import {CommentsList} from '../components/comments-list.js';
 import {Comment} from '../components/comment.js';
 import {CommentsNew} from '../components/comments-new.js';
 
-class MovieController extends AbstractComponent {
-  constructor(container, {comments, popup}, onDataChange) {
+export class MovieController {
+  constructor(container, filmData, comments, onDataChange) {
     this._container = container;
+    this._film = filmData;
     this._comments = comments;
-    this._popup = popup;
-    this._onDataChange = onDataChange.bind(this);
+    this._popup = new Popup(this._film);
+    this.show = this.show.bind(this);
+    this.hidden = this.hidden.bind(this);
   }
 
-  _onDataChange() {
-
-  }
-
-  _onChangeView() {
-
-  }
-
-  _createPopup() {
-    const popup = new Popup(this._popup);
-
-    const hiddenModal = function (evt) {
-      if (evt.key === `Escape` || evt.key === `Esc` || evt.target.className === `film-details__close-btn`) {
-        popup.getElement().style.display = `none`;
-        popup.getElement().classList.remove(`visible`);
-        document.querySelector(`body`).removeEventListener(`keydown`, hiddenModal);
-      }
-      popup.getElement()
-        .querySelector(`.film-details__close-btn`)
-        .removeEventListener(`click`, hiddenModal);
-    };
-    popup.getElement()
+  show(evt) {
+    evt.preventDefault();
+    this._popup.getElement()
       .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, hiddenModal);
+      .addEventListener(`click`, this.hidden);
 
-    popup.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());
+    this._popup.getElement().style.display = `block`;
+    this._popup.getElement().classList.add(`visible`);
+    document.querySelector(`body`).addEventListener(`keydown`, this.hidden);
+  }
+
+  hidden(evt) {
+    if (evt.key === `Escape` || evt.key === `Esc` || evt.target.className === `film-details__close-btn`) {
+      this._popup.getElement().style.display = `none`;
+      this._popup.getElement().classList.remove(`visible`);
+      document.querySelector(`body`).removeEventListener(`keydown`, this.hidden);
+    }
+    this._popup.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .removeEventListener(`click`, this.hidden);
+  }
+
+  _renderPopup() {
+
+    this._popup.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this.hidden);
+
+    this._popup.getElement()
+      .querySelector(`.film-details__controls`)
+      .addEventListener(`click`, function (e) {
+        let input;
+        if (e.target.classList.contains(`film-details__control-label--watchlist`)) {
+          input = e.target.previousElementSibling;
+          input.hasAttribute(`checked`) ? input.removeAttribute(`checked`) : input.setAttribute(`checked`, true);
+        }
+        if (e.target.classList.contains(`film-details__control-label--watched`)) {
+          input = e.target.previousElementSibling;
+          input.hasAttribute(`checked`) ? input.removeAttribute(`checked`) : input.setAttribute(`checked`, true);
+        }
+        if (e.target.classList.contains(`film-details__control-label--favorite`)) {
+          input = e.target.previousElementSibling;
+          input.hasAttribute(`checked`) ? input.removeAttribute(`checked`) : input.setAttribute(`checked`, true);
+        }
+      });
+
+    this._popup.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());
 
     this._comments.forEach((comment) => {
-      popup.getElement().querySelector(`.film-details__comments-list`).append(new Comment(comment).getElement());
+      this._popup.getElement().querySelector(`.film-details__comments-list`).append(new Comment(comment).getElement());
     });
 
-    popup.getElement().querySelector(`.film-details__comments-wrap`).append(new CommentsNew().getElement());
+    this._popup.getElement().querySelector(`.film-details__comments-wrap`).append(new CommentsNew().getElement());
 
-    this._container.append(popup.getElement());
+    this._container.append(this._popup.getElement());
 
-    popup.getElement().style.display = `none`;
+    this._popup.getElement().style.display = `none`;
   }
 
   init(){
-    this._createPopup();
+    this._renderPopup();
   }
 }

@@ -1,5 +1,5 @@
 export const getFilm = () => ({
-  title: new Set([
+  title: [
     `Звездные войны`,
     `Титаник`,
     `Аватар`,
@@ -15,7 +15,7 @@ export const getFilm = () => ({
     `Бэтмен`,
     `Джентельмены удачи`,
     `Кавказкая пленница`,
-  ]),
+  ][Math.floor(Math.random() * 15)],
   imgName: [
     `made-for-each-other.png`,
     `popeye-meets-sinbad.png`,
@@ -31,16 +31,31 @@ export const getFilm = () => ({
     `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
   ][Math.floor(Math.random() * 3)],
   rating: (Math.random() * 10).toFixed(1),
-  dateRealease: Date.now() + Math.floor(Math.random() * 24) * 24 * 60 * 60 * 1000,
+  dateRelease: Date.now() + Math.floor(Math.random() * 24) * 24 * 60 * 60 * 1000,
   duration: Date.now() + Math.floor(Math.random() * 24) * 60 * 60 * 1000,
   genre: [
     `Comedy`,
     `Horror`,
     `Fantasy`,
     `Adventure`
-  ][Math.floor(Math.random() * 4)],
+  ].slice(0, Math.floor(Math.random() * 4)),
   commentsCount: Math.floor(Math.random() * 1000),
   hasWatchlist: Boolean(Math.round(Math.random() * 1)),
   hasWatched: Boolean(Math.round(Math.random() * 1)),
   isFavorite: Boolean(Math.round(Math.random() * 1)),
+  writers: [
+    `Anne Wigton`,
+    `Heinz Herald`,
+    `Richard Weil`
+  ],
+  actors: [
+    `Erich von Stroheim`,
+    `Mary Beth Hughes`,
+    `Dan Duryea`
+  ],
+  country: [
+    `USA`,
+    `Germany`,
+    `Russian`
+  ][Math.floor(Math.random() * 3)]
 });

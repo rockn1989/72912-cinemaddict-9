@@ -1,7 +1,7 @@
 import {AbstractComponent} from '../components/abstract-component.js';
 
 export class Popup extends AbstractComponent {
-  constructor({title, imgName, description, rating, dateRelease, duration, genre, writers, actors, country}) {
+  constructor({ title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -14,6 +14,9 @@ export class Popup extends AbstractComponent {
     this._actors = actors;
     this._country = country;
     this._randomValueTitle = Math.random();
+    this._hasWatchlist = hasWatchlist;
+    this._hasWatched = hasWatched;
+    this._isFavorite = isFavorite;
   }
 
   getTemplate() {
@@ -33,8 +36,8 @@ export class Popup extends AbstractComponent {
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
-                <h3 class="film-details__title">${Array.from(this._title)[Math.floor(this._randomValueTitle * this._title.size)]}</h3>
-                <p class="film-details__title-original">Original: ${Array.from(this._title)[Math.floor(this._randomValueTitle * this._title.size)]}</p>
+                <h3 class="film-details__title">${this._title}</h3>
+                <p class="film-details__title-original">Original: ${this._title}</p>
               </div>
 
               <div class="film-details__rating">
@@ -81,13 +84,13 @@ export class Popup extends AbstractComponent {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._hasWatchlist ? `checked` : ``}>
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._hasWatched ? `checked` : ``}>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._isFavorite ? `checked` : ``}>
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
