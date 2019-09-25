@@ -8,6 +8,7 @@ export class MovieController {
     this._container = container;
     this._film = filmData;
     this._comments = comments;
+    this.onDataChange = onDataChange.bind(this);
     this._popup = new Popup(this._film);
     this.show = this.show.bind(this);
     this.hidden = this.hidden.bind(this);
@@ -36,7 +37,7 @@ export class MovieController {
   }
 
   _renderPopup() {
-
+    const popup = this._popup;
     this._popup.getElement()
       .querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, this.hidden);
@@ -47,16 +48,31 @@ export class MovieController {
         let input;
         if (e.target.classList.contains(`film-details__control-label--watchlist`)) {
           input = e.target.previousElementSibling;
-          input.hasAttribute(`checked`) ? input.removeAttribute(`checked`) : input.setAttribute(`checked`, true);
+          if (input.hasAttribute(`checked`)) {
+            input.removeAttribute(`checked`);
+            popup.hasWatchlist = false;
+          } else {
+            input.setAttribute(`checked`, true);
+            popup.hasWatchlist = true;
+          }
         }
         if (e.target.classList.contains(`film-details__control-label--watched`)) {
           input = e.target.previousElementSibling;
-          input.hasAttribute(`checked`) ? input.removeAttribute(`checked`) : input.setAttribute(`checked`, true);
+          if (input.hasAttribute(`checked`)) {
+            input.removeAttribute(`checked`);
+          } else {
+            input.setAttribute(`checked`, true);
+          }
         }
         if (e.target.classList.contains(`film-details__control-label--favorite`)) {
           input = e.target.previousElementSibling;
-          input.hasAttribute(`checked`) ? input.removeAttribute(`checked`) : input.setAttribute(`checked`, true);
+          if (input.hasAttribute(`checked`)) {
+            input.removeAttribute(`checked`);
+          } else {
+            input.setAttribute(`checked`, true);
+          }
         }
+        console.log(popup.hasWatchlist);
       });
 
     this._popup.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());

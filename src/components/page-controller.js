@@ -78,15 +78,15 @@ export class PageController {
     const MAX_RENDER_FILMS = 5;
 
     this._films.slice(0, MAX_RENDER_FILMS).map((firstFilm) => {
-      this._getData(firstFilm, 0);
+      this._createFilm(firstFilm, 0);
     });
   }
 
-  _getData(filmMock, containerIdx) {
+  _createFilm(filmMock, containerIdx) {
     const film = new Card(filmMock);
-    const popup = new MovieController(this._container, filmMock, this._comments);
+    const popup = new MovieController(this._container, filmMock, this._comments, this.onDataChange);
     popup.init();
-    
+
     const filmsContainers = document.querySelectorAll(`.films-list__container`);
 
     film.getElement()
@@ -104,11 +104,11 @@ export class PageController {
 
   _renderSettingsFilms() {
     this._films.sort((a, b) => b[`rating`] - a[`rating`]).slice(0, 2).map((film) => {
-      this._getData(film, 1);
+      this._createFilm(film, 1);
     });
 
     this._films.sort((a, b) => b[`commentsCount`] - a[`commentsCount`]).slice(0, 2).map((film) => {
-      this._getData(film, 2);
+      this._createFilm(film, 2);
     });
   }
 
@@ -122,14 +122,14 @@ export class PageController {
 
       if (currentCountFilms + remainingFilms >= this._films.length) {
         this._films.slice(currentCountFilms, currentCountFilms + remainingFilms).map((film) => {
-          return this._getData(film, 0);
+          return this._createFilm(film, 0);
         });
 
         LOAD_MORE_BTN.removeEventListener(`click`, loadingFilm);
         LOAD_MORE_BTN.remove();
       } else {
         this._films.slice(currentCountFilms, currentCountFilms + MAX_FILMS).map((film) => {
-          this._container.querySelector(`.films-list .films-list__container`).append(this._getData(film));
+          this._container.querySelector(`.films-list .films-list__container`).append(this._createFilm(film));
         });
       }
     };
