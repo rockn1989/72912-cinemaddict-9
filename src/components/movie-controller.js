@@ -8,8 +8,8 @@ export class MovieController {
     this._container = container;
     this._film = filmData;
     this._comments = comments;
-    this.onDataChange = onDataChange.bind(this);
     this._popup = new Popup(this._film);
+    this._onDataChange = onDataChange.bind(this);
     this.show = this.show.bind(this);
     this.hidden = this.hidden.bind(this);
   }
@@ -38,6 +38,24 @@ export class MovieController {
 
   _renderPopup() {
     const popup = this._popup;
+    const _that = this;
+    const popupData = {
+      title: this._film.title,
+      imgName: this._film.imgName,
+      description: this._film.description,
+      rating: this._film.rating,
+      dateRelease: this._film.dateRelease,
+      duration: this._film.duration,
+      genre: this._film.genre,
+      writers: this._film.writers,
+      actors: this._film.actors,
+      country: this._film.country,
+      commentsCount: this._film.commentsCount,
+      hasWatchlist: this._film.hasWatchlist,
+      hasWatched: this._film.hasWatched,
+      isFavorite: this._film.isFavorite
+    };
+
     this._popup.getElement()
       .querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, this.hidden);
@@ -46,14 +64,15 @@ export class MovieController {
       .querySelector(`.film-details__controls`)
       .addEventListener(`click`, function (e) {
         let input;
-        if (e.target.classList.contains(`film-details__control-label--watchlist`)) {
+
+        if (e.target.tagName === `LABEL` && e.target.classList.contains(`film-details__control-label--watchlist`)) {
           input = e.target.previousElementSibling;
           if (input.hasAttribute(`checked`)) {
             input.removeAttribute(`checked`);
-            popup.hasWatchlist = false;
+            popupData.hasWatchlist = false;
           } else {
             input.setAttribute(`checked`, true);
-            popup.hasWatchlist = true;
+            popupData.hasWatchlist = true;
           }
         }
         if (e.target.classList.contains(`film-details__control-label--watched`)) {
@@ -72,7 +91,8 @@ export class MovieController {
             input.setAttribute(`checked`, true);
           }
         }
-        console.log(popup.hasWatchlist);
+        console.log(popupData.hasWatchlist);
+        _that._onDataChange(popupData);
       });
 
     this._popup.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());

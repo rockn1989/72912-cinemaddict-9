@@ -24,6 +24,7 @@ export class PageController {
   }
 
   onDataChange(newData) {
+    //console.log(newData);
     this._films[this._films.findIndex((it) => it.title === newData.title)] = newData;
     this._renderFilms();
   }
