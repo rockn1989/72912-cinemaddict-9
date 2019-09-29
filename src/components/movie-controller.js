@@ -9,7 +9,7 @@ export class MovieController {
     this._film = filmData;
     this._comments = comments;
     this._popup = new Popup(this._film);
-    this._onDataChange = onDataChange.bind(this);
+    this._onDataChange = onDataChange;
     this.show = this.show.bind(this);
     this.hidden = this.hidden.bind(this);
   }
@@ -37,24 +37,7 @@ export class MovieController {
   }
 
   _renderPopup() {
-    const popup = this._popup;
-    const _that = this;
-    const popupData = {
-      title: this._film.title,
-      imgName: this._film.imgName,
-      description: this._film.description,
-      rating: this._film.rating,
-      dateRelease: this._film.dateRelease,
-      duration: this._film.duration,
-      genre: this._film.genre,
-      writers: this._film.writers,
-      actors: this._film.actors,
-      country: this._film.country,
-      commentsCount: this._film.commentsCount,
-      hasWatchlist: this._film.hasWatchlist,
-      hasWatched: this._film.hasWatched,
-      isFavorite: this._film.isFavorite
-    };
+    const popupData = this._film;
 
     this._popup.getElement()
       .querySelector(`.film-details__close-btn`)
@@ -62,37 +45,43 @@ export class MovieController {
 
     this._popup.getElement()
       .querySelector(`.film-details__controls`)
-      .addEventListener(`click`, function (e) {
-        let input;
+      .addEventListener(`click`, (e) => {
+        if(e.target.tagName === `LABEL`) {
+          let input;
 
-        if (e.target.tagName === `LABEL` && e.target.classList.contains(`film-details__control-label--watchlist`)) {
-          input = e.target.previousElementSibling;
-          if (input.hasAttribute(`checked`)) {
-            input.removeAttribute(`checked`);
-            popupData.hasWatchlist = false;
-          } else {
-            input.setAttribute(`checked`, true);
-            popupData.hasWatchlist = true;
+          if (e.target.classList.contains(`film-details__control-label--watchlist`)) {
+            input = e.target.previousElementSibling;
+            if (input.hasAttribute(`checked`)) {
+              input.removeAttribute(`checked`);
+              popupData.hasWatchlist = false;
+            } else {
+              input.setAttribute(`checked`, true);
+              popupData.hasWatchlist = true;
+            }
           }
-        }
-        if (e.target.classList.contains(`film-details__control-label--watched`)) {
-          input = e.target.previousElementSibling;
-          if (input.hasAttribute(`checked`)) {
-            input.removeAttribute(`checked`);
-          } else {
-            input.setAttribute(`checked`, true);
+          if (e.target.classList.contains(`film-details__control-label--watched`)) {
+            input = e.target.previousElementSibling;
+            if (input.hasAttribute(`checked`)) {
+              input.removeAttribute(`checked`);
+              popupData.hasWatched = false;
+            } else {
+              input.setAttribute(`checked`, true);
+              popupData.hasWatched = true;
+            }
           }
-        }
-        if (e.target.classList.contains(`film-details__control-label--favorite`)) {
-          input = e.target.previousElementSibling;
-          if (input.hasAttribute(`checked`)) {
-            input.removeAttribute(`checked`);
-          } else {
-            input.setAttribute(`checked`, true);
+          if (e.target.classList.contains(`film-details__control-label--favorite`)) {
+            input = e.target.previousElementSibling;
+            if (input.hasAttribute(`checked`)) {
+              input.removeAttribute(`checked`);
+              popupData.isFavorite = false;
+            } else {
+              input.setAttribute(`checked`, true);
+              popupData.isFavorite = true;
+            }
           }
+          console.log(popupData);
+          this._onDataChange(popupData);
         }
-        console.log(popupData.hasWatchlist);
-        _that._onDataChange(popupData);
       });
 
     this._popup.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());

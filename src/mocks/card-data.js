@@ -1,4 +1,5 @@
-export const getFilm = () => ({
+export const getFilm = (id) => ({
+  id,
   title: [
     `Звездные войны`,
     `Титаник`,

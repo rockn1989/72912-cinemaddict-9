@@ -11,7 +11,7 @@ const allFilms = [];
 const allComments = [];
 
 for (let i = 0; i < COUNT_FILMS; i++) {
-  allFilms.push(getFilm());
+  allFilms.push(getFilm(i));
 }
 
 for (let i = 0; i < COUNT_COMMENTS; i++) {

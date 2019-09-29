@@ -21,12 +21,16 @@ export class PageController {
     this._films = films;
     this._comments = comments;
     this._filters = [`All films`, `Watchlist`, `History`, `Favorite`, `Stats`];
+    this.onDataChange = this.onDataChange.bind(this);
   }
 
   onDataChange(newData) {
-    //console.log(newData);
-    this._films[this._films.findIndex((it) => it.title === newData.title)] = newData;
+    this._films[this._films.findIndex((it) => it.id === newData.id)] = newData;
+    this._filmsContainer.innerHTML = ``;
+    this._renderFilmsList();
     this._renderFilms();
+    this._renderSettingsFilms();
+    this._loadingFilm();
   }
 
   _renderStatic() {
@@ -35,10 +39,13 @@ export class PageController {
     this._container.append(new MenuWrapper().getElement());
     this._container.append(new Sort().getElement());
     this._container.append(new FilmsSection().getElement());
+  }
+
+  _renderFilmsList() {
     this._filmsContainer = this._container.querySelector(`.films`);
-    this._filmsContainer.append(new FilmsList({title: `All movies. Upcoming`, isHidden: true}).getElement());
-    this._filmsContainer.append(new FilmsList({title: `Top rated`, columns: 2}).getElement());
-    this._filmsContainer.append(new FilmsList({title: `Most commented`, columns: 2}).getElement());
+    this._filmsContainer.append(new FilmsList({ title: `All movies. Upcoming`, isHidden: true }).getElement());
+    this._filmsContainer.append(new FilmsList({ title: `Top rated`, columns: 2 }).getElement());
+    this._filmsContainer.append(new FilmsList({ title: `Most commented`, columns: 2 }).getElement());
   }
 
   _renderFilters() {
@@ -78,12 +85,13 @@ export class PageController {
   _renderFilms() {
     const MAX_RENDER_FILMS = 5;
 
-    this._films.slice(0, MAX_RENDER_FILMS).map((firstFilm) => {
+    this._films.slice(0, MAX_RENDER_FILMS).forEach((firstFilm) => {
       this._createFilm(firstFilm, 0);
     });
   }
 
   _createFilm(filmMock, containerIdx) {
+    const filmData = filmMock;
     const film = new Card(filmMock);
     const popup = new MovieController(this._container, filmMock, this._comments, this.onDataChange);
     popup.init();
@@ -100,15 +108,52 @@ export class PageController {
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, popup.show);
 
+    film.getElement()
+      .querySelector(`.film-card__controls`)
+      .addEventListener(`click`, (e) => {
+        e.preventDefault();
+        let button = e.target;
+
+        if (button.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
+          if (button.classList.contains(`film-card__controls-item--active`)) {
+            button.classList.remove(`film-card__controls-item--active`);
+            filmData.hasWatchlist = false;
+          } else {
+            button.classList.add(`film-card__controls-item--active`);
+            filmData.hasWatchlist = true;
+          }
+        }
+        if (button.classList.contains(`film-card__controls-item--mark-as-watched`)) {
+          if (button.classList.contains(`film-card__controls-item--active`)) {
+            button.classList.remove(`film-card__controls-item--active`);
+            filmData.hasWatched = false;
+          } else {
+            button.classList.add(`film-card__controls-item--active`);
+            filmData.hasWatched = true;
+          }
+        }
+        if (button.classList.contains(`film-card__controls-item--favorite`)) {
+          if (button.classList.contains(`film-card__controls-item--active`)) {
+            button.classList.remove(`film-card__controls-item--active`);
+            filmData.isFavorite = false;
+          } else {
+            button.classList.add(`film-card__controls-item--active`);
+            filmData.isFavorite = true;
+          }
+        }
+        console.log(filmData);
+        this.onDataChange(filmData);
+      });
+
     filmsContainers[containerIdx].append(film.getElement());
   }
 
   _renderSettingsFilms() {
-    this._films.sort((a, b) => b[`rating`] - a[`rating`]).slice(0, 2).map((film) => {
+    [...this._films].sort((a, b) => b[`rating`] - a[`rating`]).slice(0, 2).forEach((film) => {
       this._createFilm(film, 1);
     });
 
-    this._films.sort((a, b) => b[`commentsCount`] - a[`commentsCount`]).slice(0, 2).map((film) => {
+    [...this._films].sort((a, b) => b[`commentsCount`] - a[`commentsCount`]).slice(0, 2).forEach((film) => {
       this._createFilm(film, 2);
     });
   }
@@ -140,6 +185,7 @@ export class PageController {
 
   init() {
     this._renderStatic();
+    this._renderFilmsList();
     this._renderFilters();
     this._renderFilms();
     this._renderSettingsFilms();
