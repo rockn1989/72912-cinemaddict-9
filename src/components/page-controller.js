@@ -141,7 +141,7 @@ export class PageController {
             filmData.isFavorite = true;
           }
         }
-        console.log(filmData);
+
         this.onDataChange(filmData);
       });
 

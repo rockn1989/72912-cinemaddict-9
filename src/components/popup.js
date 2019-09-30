@@ -1,7 +1,7 @@
 import {AbstractComponent} from '../components/abstract-component.js';
 
 export class Popup extends AbstractComponent {
-  constructor({ title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country}) {
+  constructor({title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -17,6 +17,8 @@ export class Popup extends AbstractComponent {
     this._hasWatchlist = hasWatchlist;
     this._hasWatched = hasWatched;
     this._isFavorite = isFavorite;
+    this.getStatus();
+    this.setFilmRating();
   }
 
   getTemplate() {
@@ -147,4 +149,40 @@ export class Popup extends AbstractComponent {
       </div>
   </section>`;
   }
+
+  getStatus() {
+    if (this._hasWatched) {
+      this.getElement().querySelector(`.form-details__middle-container`).style.display = `block`;
+    } else {
+      this.getElement().querySelector(`.form-details__middle-container`).style.display = `none`;
+    }
+  }
+
+  setFilmRating() {
+    this.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .addEventListener(`click`, (e) => {
+        e.preventDefault();
+        const inputs = this.getElement().querySelector(`.film-details__user-rating-score`).querySelectorAll(`input`);
+        inputs.forEach((input) => {
+          input.removeAttribute(`checked`);
+        });
+
+        if (e.target.tagName === `LABEL`) {
+          let input = e.target.previousElementSibling;
+
+          if (input.hasAttribute(`checked`)) {
+            input.removeAttribute(`checked`);
+          } else {
+            input.setAttribute(`checked`, true);
+            this.updateRating(input.getAttribute(`value`));
+          }
+        }
+      });
+  }
+
+  updateRating(userRating) {
+    this._rating = (parseFloat(this._rating) + (parseInt(userRating, 10) / 10)).toFixed(1);
+  }
+
 }

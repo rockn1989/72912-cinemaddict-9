@@ -46,7 +46,7 @@ export class MovieController {
     this._popup.getElement()
       .querySelector(`.film-details__controls`)
       .addEventListener(`click`, (e) => {
-        if(e.target.tagName === `LABEL`) {
+        if (e.target.tagName === `LABEL`) {
           let input;
 
           if (e.target.classList.contains(`film-details__control-label--watchlist`)) {
@@ -79,8 +79,9 @@ export class MovieController {
               popupData.isFavorite = true;
             }
           }
-          console.log(popupData);
+
           this._onDataChange(popupData);
+          this._popup.getStatus();
         }
       });
 
@@ -97,7 +98,7 @@ export class MovieController {
     this._popup.getElement().style.display = `none`;
   }
 
-  init(){
+  init() {
     this._renderPopup();
   }
 }
