@@ -8,10 +8,6 @@ import {FilmsList} from './films-list.js';
 import {Link} from './site-menu-link.js';
 
 import {Card} from '../components/card.js';
-import {Popup} from '../components/popup.js';
-import {CommentsList} from '../components/comments-list.js';
-import {Comment} from '../components/comment.js';
-import {CommentsNew} from '../components/comments-new.js';
 import {MovieController} from '../components/movie-controller.js';
 
 export class PageController {
@@ -21,7 +17,13 @@ export class PageController {
     this._films = films;
     this._comments = comments;
     this._filters = [`All films`, `Watchlist`, `History`, `Favorite`, `Stats`];
+    this._subscriptions = [];
     this.onDataChange = this.onDataChange.bind(this);
+    this.onChangeView = this.onChangeView.bind(this);
+  }
+
+  onChangeView() {
+    this._subscriptions.forEach((subscription) => subscription());
   }
 
   onDataChange(newData) {
@@ -93,8 +95,9 @@ export class PageController {
   _createFilm(filmMock, containerIdx) {
     const filmData = filmMock;
     const film = new Card(filmMock);
-    const popup = new MovieController(this._container, filmMock, this._comments, this.onDataChange);
-    popup.init();
+    const popup = new MovieController(this._container, filmMock, this._comments, this.onDataChange, this.onChangeView);
+
+    this._subscriptions.push(popup.setDefaultView);
 
     const filmsContainers = document.querySelectorAll(`.films-list__container`);
 

@@ -1,7 +1,10 @@
 import {AbstractComponent} from '../components/abstract-component.js';
+import { CommentsList } from '../components/comments-list.js';
+import { Comment } from '../components/comment.js';
+import { CommentsNew } from '../components/comments-new.js';
 
 export class Popup extends AbstractComponent {
-  constructor({title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country}) {
+  constructor({ title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country }, comments) {
     super();
     this._title = title;
     this._rating = rating;
@@ -17,8 +20,11 @@ export class Popup extends AbstractComponent {
     this._hasWatchlist = hasWatchlist;
     this._hasWatched = hasWatched;
     this._isFavorite = isFavorite;
-    this.getStatus();
+    this._comments = comments;
+    this.getStatus(hasWatched);
     this.setFilmRating();
+    this._renderComments();
+    this.checkEmoji();
   }
 
   getTemplate() {
@@ -104,11 +110,11 @@ export class Popup extends AbstractComponent {
 
             <div class="film-details__user-score">
               <div class="film-details__user-rating-poster">
-                <img src="./images/posters/the-great-flamarion.jpg" alt="film-poster" class="film-details__user-rating-img">
+                <img src="./images/posters/${this._imgName}" alt="film-poster" class="film-details__user-rating-img">
               </div>
 
               <section class="film-details__user-rating-inner">
-                <h3 class="film-details__user-rating-title">The Great Flamarion</h3>
+                <h3 class="film-details__user-rating-title">${this._title}</h3>
 
                 <p class="film-details__user-rating-feelings">How you feel it?</p>
 
@@ -150,11 +156,12 @@ export class Popup extends AbstractComponent {
   </section>`;
   }
 
-  getStatus() {
-    if (this._hasWatched) {
+  getStatus(status) {
+    if (status) {
       this.getElement().querySelector(`.form-details__middle-container`).style.display = `block`;
     } else {
       this.getElement().querySelector(`.form-details__middle-container`).style.display = `none`;
+      this._resetRating();
     }
   }
 
@@ -163,10 +170,6 @@ export class Popup extends AbstractComponent {
       .querySelector(`.film-details__user-rating-score`)
       .addEventListener(`click`, (e) => {
         e.preventDefault();
-        const inputs = this.getElement().querySelector(`.film-details__user-rating-score`).querySelectorAll(`input`);
-        inputs.forEach((input) => {
-          input.removeAttribute(`checked`);
-        });
 
         if (e.target.tagName === `LABEL`) {
           let input = e.target.previousElementSibling;
@@ -174,15 +177,51 @@ export class Popup extends AbstractComponent {
           if (input.hasAttribute(`checked`)) {
             input.removeAttribute(`checked`);
           } else {
+            this._resetRating();
             input.setAttribute(`checked`, true);
-            this.updateRating(input.getAttribute(`value`));
           }
+          this.updateRating(input.getAttribute(`value`));
         }
       });
   }
 
-  updateRating(userRating) {
-    this._rating = (parseFloat(this._rating) + (parseInt(userRating, 10) / 10)).toFixed(1);
+  _resetRating() {
+    const inputs = this.getElement().querySelector(`.film-details__user-rating-score`).querySelectorAll(`input`);
+    inputs.forEach((input) => {
+      input.removeAttribute(`checked`);
+    });
+  }
+
+  _renderComments() {
+    this.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());
+
+    this._comments.forEach((comment) => {
+      this.getElement().querySelector(`.film-details__comments-list`).append(new Comment(comment).getElement());
+    });
+
+    this.getElement().querySelector(`.film-details__comments-wrap`).append(new CommentsNew().getElement());
+  }
+
+  checkEmoji() {
+    this.getElement()
+      .querySelector(`.film-details__emoji-list`)
+      .addEventListener(`click`, (e) => {
+        e.preventDefault();
+        if (e.target.tagName === `IMG`) {
+          let newImg = new Image();
+          let oldImg = this.getElement().querySelector(`.film-details__add-emoji-label img`);
+          newImg.src = e.target.src;
+          newImg.width = 55;
+          newImg.height = 55;
+          newImg.alt = `emoji`;
+          
+          if (oldImg) {
+            this.getElement().querySelector(`.film-details__add-emoji-label`).removeChild(oldImg);
+          }
+
+          this.getElement().querySelector(`.film-details__add-emoji-label`).append(newImg);
+        }
+      });
   }
 
 }

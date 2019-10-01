@@ -34,7 +34,6 @@ const renderAppend = (container, element, place) => {
 
 const unrender = (el) => {
   if (el) {
-    el.removeElement();
     el.remove();
   }
 };
