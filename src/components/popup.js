@@ -1,10 +1,10 @@
 import {AbstractComponent} from '../components/abstract-component.js';
-import { CommentsList } from '../components/comments-list.js';
-import { Comment } from '../components/comment.js';
-import { CommentsNew } from '../components/comments-new.js';
+import {CommentsList} from '../components/comments-list.js';
+import {Comment} from '../components/comment.js';
+import {CommentsNew} from '../components/comments-new.js';
 
 export class Popup extends AbstractComponent {
-  constructor({ title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country }, comments) {
+  constructor({title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country}, comments) {
     super();
     this._title = title;
     this._rating = rating;
@@ -214,7 +214,6 @@ export class Popup extends AbstractComponent {
           newImg.width = 55;
           newImg.height = 55;
           newImg.alt = `emoji`;
-          
           if (oldImg) {
             this.getElement().querySelector(`.film-details__add-emoji-label`).removeChild(oldImg);
           }

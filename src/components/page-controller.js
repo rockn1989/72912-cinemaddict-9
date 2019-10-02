@@ -45,9 +45,9 @@ export class PageController {
 
   _renderFilmsList() {
     this._filmsContainer = this._container.querySelector(`.films`);
-    this._filmsContainer.append(new FilmsList({ title: `All movies. Upcoming`, isHidden: true }).getElement());
-    this._filmsContainer.append(new FilmsList({ title: `Top rated`, columns: 2 }).getElement());
-    this._filmsContainer.append(new FilmsList({ title: `Most commented`, columns: 2 }).getElement());
+    this._filmsContainer.append(new FilmsList({title: `All movies. Upcoming`, isHidden: true}).getElement());
+    this._filmsContainer.append(new FilmsList({title: `Top rated`, columns: 2}).getElement());
+    this._filmsContainer.append(new FilmsList({title: `Most commented`, columns: 2}).getElement());
   }
 
   _renderFilters() {
