@@ -1,7 +1,7 @@
 import {AbstractComponent} from '../components/abstract-component.js';
 
 export class Card extends AbstractComponent {
-  constructor({title, rating, dateRelease, duration, genre, imgName, description, commentsCount, hasWatchlist, hasWatched, isFavorite}) {
+  constructor({title, rating, dateRelease, duration, genre, imgName, description, comments, hasWatchlist, hasWatched, isFavorite}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -10,7 +10,7 @@ export class Card extends AbstractComponent {
     this._genre = genre;
     this._imgName = imgName;
     this._description = description;
-    this._commentsCount = commentsCount;
+    this._commentsCount = comments.length;
     this._hasWatchlist = hasWatchlist;
     this._hasWatched = hasWatched;
     this._isFavorite = isFavorite;

@@ -1,3 +1,5 @@
+import {getComments} from './comment-data.js';
+
 export const getFilm = (id) => ({
   id,
   title: [
@@ -40,7 +42,7 @@ export const getFilm = (id) => ({
     `Fantasy`,
     `Adventure`
   ].slice(0, Math.floor(Math.random() * 4)),
-  commentsCount: Math.floor(Math.random() * 1000),
+  comments: getComments(Math.floor(Math.random() * 5)),
   hasWatchlist: Boolean(Math.round(Math.random() * 1)),
   hasWatched: Boolean(Math.round(Math.random() * 1)),
   isFavorite: Boolean(Math.round(Math.random() * 1)),
@@ -58,5 +60,6 @@ export const getFilm = (id) => ({
     `USA`,
     `Germany`,
     `Russian`
-  ][Math.floor(Math.random() * 3)]
+  ][Math.floor(Math.random() * 3)],
+
 });

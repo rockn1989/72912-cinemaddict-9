@@ -38,4 +38,10 @@ const unrender = (el) => {
   }
 };
 
-export {createElement, render, unrender, renderAppend};
+
+const clearContainer = (container) => {
+  while (container.firstChild) {
+    container.firstChild.remove();
+  }
+}
+export {createElement, render, unrender, renderAppend, clearContainer};

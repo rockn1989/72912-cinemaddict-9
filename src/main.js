@@ -1,23 +1,19 @@
 import {PageController} from './components/page-controller.js';
 import {getFilm} from '../src/mocks/card-data.js';
-import {getComment} from '../src/mocks/comment-data.js';
-
+import {Statistics} from './components/statistics.js';
 
 const COUNT_FILMS = 8;
-const COUNT_COMMENTS = 4;
-
 const allFilms = [];
-const allComments = [];
 
 for (let i = 0; i < COUNT_FILMS; i++) {
   allFilms.push(getFilm(i));
 }
 
-for (let i = 0; i < COUNT_COMMENTS; i++) {
-  allComments.push(getComment());
-}
 
-const controller = new PageController(document.querySelector(`.main`), {films: allFilms, comments: allComments});
+document.querySelector(`.main`).append(new Statistics().getElement());
+
+const controller = new PageController(document.querySelector(`.main`), allFilms);
 controller.init();
+controller.hideStatistics();
 
 document.querySelector(`.footer__statistics p`).textContent = allFilms.length;

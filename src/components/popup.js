@@ -2,9 +2,10 @@ import {AbstractComponent} from '../components/abstract-component.js';
 import {CommentsList} from '../components/comments-list.js';
 import {Comment} from '../components/comment.js';
 import {CommentsNew} from '../components/comments-new.js';
+import {clearContainer, unrender} from '../components/utils.js';
 
 export class Popup extends AbstractComponent {
-  constructor({title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country}, comments) {
+  constructor({title, imgName, description, rating, dateRelease, duration, genre, hasWatchlist, hasWatched, isFavorite, writers, actors, country, comments}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -21,10 +22,10 @@ export class Popup extends AbstractComponent {
     this._hasWatched = hasWatched;
     this._isFavorite = isFavorite;
     this._comments = comments;
+    this._commentsCount = comments.filter(({deleted}) => deleted === false).length;
     this.getStatus(hasWatched);
     this.setFilmRating();
     this._renderComments();
-    this.checkEmoji();
   }
 
   getTemplate() {
@@ -180,7 +181,6 @@ export class Popup extends AbstractComponent {
             this._resetRating();
             input.setAttribute(`checked`, true);
           }
-          this.updateRating(input.getAttribute(`value`));
         }
       });
   }
@@ -193,6 +193,7 @@ export class Popup extends AbstractComponent {
   }
 
   _renderComments() {
+
     this.getElement().querySelector(`.film-details__inner`).append(new CommentsList(this._comments.length).getElement());
 
     this._comments.forEach((comment) => {
@@ -200,6 +201,52 @@ export class Popup extends AbstractComponent {
     });
 
     this.getElement().querySelector(`.film-details__comments-wrap`).append(new CommentsNew().getElement());
+    this.checkEmoji();
+    this.sendMessage();
+  }
+
+  sendMessage() {
+    this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, () => {
+        document.querySelector(`body`).addEventListener(`keydown`, (e) => {
+          if (e.ctrlKey && e.key === `Enter`) {
+            if (
+              this.getElement().querySelector(`.film-details__add-emoji-label`).children.length > 0 &&
+              this.getElement().querySelector(`.film-details__comment-input`).value.length > 0
+            ) {
+              const imageName = this.getElement().querySelector(`.film-details__add-emoji-label img`).getAttribute(`alt`);
+              const text = this.getElement().querySelector(`.film-details__comment-input`).value;
+              const newCommentData = {
+                img: imageName,
+                text: this._escapeHTML(text),
+                date: Date.now()
+              };
+
+              this._comments.push(newCommentData);
+              this._clearForm();
+              this._deleteMessage();
+              this._renderComments(this._comments);
+            }
+          }
+        });
+      });
+  }
+
+  _deleteMessage() {
+    unrender(this.getElement().querySelector(`.form-details__bottom-container`));
+  }
+
+  _escapeHTML(string) {
+    return string.replace(/</g, `&lt;`)
+      .replace(/>/g, `&gt;`)
+      .replace(/"/g, `&quot;`)
+      .replace(/'/g, `&#039;`);
+  }
+
+  _clearForm() {
+    this.getElement().querySelector(`.film-details__comment-input`).value = ``;
+    clearContainer(this.getElement().querySelector(`.film-details__add-emoji-label`));
   }
 
   checkEmoji() {
@@ -213,7 +260,7 @@ export class Popup extends AbstractComponent {
           newImg.src = e.target.src;
           newImg.width = 55;
           newImg.height = 55;
-          newImg.alt = `emoji`;
+          newImg.alt = `${e.target.alt}`;
           if (oldImg) {
             this.getElement().querySelector(`.film-details__add-emoji-label`).removeChild(oldImg);
           }

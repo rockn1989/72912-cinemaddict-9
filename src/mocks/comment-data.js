@@ -1,9 +1,9 @@
-export const getComment = () => ({
+const getComment = () => ({
   img: [
-    `smile.png`,
-    `sleeping.png`,
-    `puke.png`,
-    `angry.png`
+    `smile`,
+    `sleeping`,
+    `puke`,
+    `angry`
   ][Math.floor(Math.random() * 4)],
   text: [
     `Interesting setting and a good cast`,
@@ -17,3 +17,12 @@ export const getComment = () => ({
   ][Math.floor(Math.random() * 3)],
   date: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000
 });
+
+
+export const getComments = (count) => {
+  let commentsArray = [];
+  for(let i = 0; i < count; i++) {
+    commentsArray.push(getComment());
+  }
+  return commentsArray;
+};

@@ -2,10 +2,10 @@ import {Popup} from "./popup";
 import {unrender} from "./utils";
 
 export class MovieController {
-  constructor(container, filmData, comments, onDataChange, onChangeView) {
+  constructor(container, filmData, onDataChange, onChangeView) {
     this._container = container;
     this._film = filmData;
-    this._popup = new Popup(this._film, comments);
+    this._popup = new Popup(this._film);
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
     this.show = this.show.bind(this);
@@ -34,6 +34,7 @@ export class MovieController {
   hidden(evt) {
     if (evt.key === `Escape` || evt.key === `Esc` || evt.target.className === `film-details__close-btn`) {
       this.setDefaultView();
+      this._onDataChange(this._popup);
       document.querySelector(`body`).removeEventListener(`keydown`, this.hidden);
     }
     this._popup.getElement()
@@ -87,8 +88,21 @@ export class MovieController {
 
           this._onDataChange(popupData);
           this._popup.getStatus(popupData.hasWatched);
-
         }
+      });
+
+    this._popup.getElement()
+      .querySelectorAll(`.film-details__comment`).forEach((comment) => {
+        comment.addEventListener(`click`, (e) => {
+          e.preventDefault();
+          if (e.target.classList.contains(`film-details__comment-delete`)) {
+            const commentId = [...this._popup.getElement().querySelectorAll(`.film-details__comment`)].indexOf(comment);
+            this._film.comments.splice(commentId, 1);
+            //this._popup._deleteMessage();
+            //this._popup._renderComments();
+            this._onDataChange(this._film);
+          }
+        });
       });
 
     this._container.append(this._popup.getElement());
