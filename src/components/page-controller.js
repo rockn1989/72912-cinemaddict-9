@@ -1,11 +1,8 @@
 import {Search} from './search.js';
 import {getUserStatus} from '../mocks/user-profile-data.js';
 import {UserProfile} from './user-profile.js';
-import {MenuWrapper} from './site-menu.js';
-import {Sort} from './sort.js';
 import {FilmsSection} from './films-wrapper.js';
-import {FilmsList} from './films-list.js';
-import {Link} from './site-menu-link.js';
+
 import {Card} from '../components/card.js';
 import {MovieController} from '../components/movie-controller.js';
 import {clearContainer} from '../components/utils.js';
@@ -23,14 +20,6 @@ export class PageController {
     this.onChangeView = this.onChangeView.bind(this);
   }
 
-  showStatistics() {
-    this._container.querySelector(`.statistic`).classList.remove(`visually-hidden`);
-  }
-
-  hideStatistics() {
-    this._container.querySelector(`.statistic`).classList.add(`visually-hidden`);
-  }
-
   onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
@@ -40,94 +29,26 @@ export class PageController {
     clearContainer(this._filmsContainer);
     this._renderFilmsList();
     this._renderFilms(this._films);
-    this._renderSettingsFilms();
     this._loadingFilm();
     this.onChangeView();
   }
 
-  _renderStatic() {
+  renderStatic() {
     this._headerContainer.append(new Search().getElement());
     this._headerContainer.append(new UserProfile(getUserStatus(this._films.filter(({hasWatched}) => hasWatched).length)).getElement());
-    this._container.append(new MenuWrapper().getElement());
-    this._container.append(new Sort().getElement());
-    this._container.append(new FilmsSection().getElement());
+  }
 
+  _renderFilmsContainer() {
+    this._container.append(new FilmsSection().getElement());
+    this._filmsContainer = this._container.querySelector(`.films`);
+  }
+
+  _renderMenu() {
+    throw new Error(`Abstract method not implemented: renderMenu`);
   }
 
   _renderFilmsList() {
-    this._filmsContainer = this._container.querySelector(`.films`);
-    this._filmsContainer.append(new FilmsList({title: `All movies. Upcoming`, isHidden: true}).getElement());
-    this._filmsContainer.append(new FilmsList({title: `Top rated`, columns: 2}).getElement());
-    this._filmsContainer.append(new FilmsList({title: `Most commented`, columns: 2}).getElement());
-  }
-
-  _renderFilters() {
-    const filtersMap = this._filters.map((filterName) => {
-      let filterCount;
-      switch (filterName) {
-        case `All films`:
-          filterCount = this._films.length;
-          break;
-        case `Watchlist`:
-          filterCount = this._films.filter(({hasWatchlist}) => hasWatchlist).length;
-          break;
-        case `History`:
-          filterCount = this._films.filter(({hasWatched}) => hasWatched).length;
-          break;
-        case `Favorite`:
-          filterCount = this._films.filter(({isFavorite}) => isFavorite).length;
-          break;
-        case `Stats`:
-          filterCount = null;
-          break;
-        default:
-          return 0;
-      }
-      return {
-        title: filterName,
-        anchor: filterName.split(` `)[0].toLowerCase(),
-        count: filterCount
-      };
-    });
-
-    filtersMap.forEach((filter) => {
-      this._container.querySelector(`.main-navigation`).append(new Link(filter).getElement());
-    });
-  }
-
-  addHandlers() {
-    this._container.querySelector(`.main-navigation`).addEventListener(`click`, (e) => {
-      if (e.target.getAttribute(`href`) === `#stats`) {
-        this.toggleStatistics();
-      } else {
-        this.hideStatistics();
-        clearContainer(this._container.querySelector(`.films-list .films-list__container`));
-        let filtredFilms = [];
-        switch (e.target.getAttribute(`href`)) {
-          case `#watchlist`:
-            filtredFilms = this._films.filter(({hasWatchlist}) => hasWatchlist);
-            break;
-          case `#history`:
-            filtredFilms = this._films.filter(({hasWatched}) => hasWatched);
-            break;
-          case `#favorite`:
-            filtredFilms = this._films.filter(({isFavorite}) => isFavorite);
-            break;
-          default:
-            filtredFilms = this._films;
-        }
-        this._renderFilms(filtredFilms);
-        this._loadingFilm(filtredFilms);
-      }
-    });
-  }
-
-  toggleStatistics() {
-    if (this._container.querySelector(`.statistic`).classList.contains(`visually-hidden`)) {
-      this.showStatistics();
-    } else {
-      this.hideStatistics();
-    }
+    throw new Error(`Abstract method not implemented: renderFilmsList`);
   }
 
   _renderFilms(films) {
@@ -195,16 +116,6 @@ export class PageController {
     filmsContainers[containerIdx].append(film.getElement());
   }
 
-  _renderSettingsFilms() {
-    [...this._films].sort((a, b) => b[`rating`] - a[`rating`]).slice(0, 2).forEach((film) => {
-      this._createFilm(film, 1);
-    });
-
-    [...this._films].sort((a, b) => b[`commentsCount`] - a[`commentsCount`]).slice(0, 2).forEach((film) => {
-      this._createFilm(film, 2);
-    });
-  }
-
   _loadingFilm(films) {
     const LOAD_MORE_BTN = this._container.querySelector(`.films-list__show-more`);
     const MAX_FILMS = 5;
@@ -230,13 +141,16 @@ export class PageController {
     LOAD_MORE_BTN.addEventListener(`click`, loadingFilm);
   }
 
-  init() {
-    this._renderStatic();
+  _renderSuperFilms() {
+    this._renderFilmsContainer();
     this._renderFilmsList();
-    this._renderFilters();
     this._renderFilms(this._films);
-    this._renderSettingsFilms();
     this._loadingFilm(this._films);
-    this.addHandlers();
+  }
+
+  init() {
+    clearContainer(this._container);
+    this._renderMenu();
+    this._renderSuperFilms();
   }
 }

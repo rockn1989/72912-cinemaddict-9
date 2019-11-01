@@ -21,7 +21,7 @@ const getComment = () => ({
 
 export const getComments = (count) => {
   let commentsArray = [];
-  for(let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i++) {
     commentsArray.push(getComment());
   }
   return commentsArray;

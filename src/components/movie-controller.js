@@ -91,20 +91,6 @@ export class MovieController {
         }
       });
 
-    this._popup.getElement()
-      .querySelectorAll(`.film-details__comment`).forEach((comment) => {
-        comment.addEventListener(`click`, (e) => {
-          e.preventDefault();
-          if (e.target.classList.contains(`film-details__comment-delete`)) {
-            const commentId = [...this._popup.getElement().querySelectorAll(`.film-details__comment`)].indexOf(comment);
-            this._film.comments.splice(commentId, 1);
-            //this._popup._deleteMessage();
-            //this._popup._renderComments();
-            this._onDataChange(this._film);
-          }
-        });
-      });
-
     this._container.append(this._popup.getElement());
   }
 }

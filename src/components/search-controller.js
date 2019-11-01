@@ -1,9 +1,8 @@
 import {AbstractComponent} from "./abstract-component";
-import {SearchResult} from "./search-result";
-import {Search} from "./search";
 
-export class SearchController extends AbstractComponent{
+export class SearchController extends AbstractComponent {
   constructor(container) {
+    super();
     this._container = container;
   }
 }

@@ -201,11 +201,12 @@ export class Popup extends AbstractComponent {
     });
 
     this.getElement().querySelector(`.film-details__comments-wrap`).append(new CommentsNew().getElement());
-    this.checkEmoji();
-    this.sendMessage();
+    this._checkEmoji();
+    this._sendMessage();
+    this._deleteMessage();
   }
 
-  sendMessage() {
+  _sendMessage() {
     this.getElement()
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`focus`, () => {
@@ -225,7 +226,7 @@ export class Popup extends AbstractComponent {
 
               this._comments.push(newCommentData);
               this._clearForm();
-              this._deleteMessage();
+              unrender(this.getElement().querySelector(`.form-details__bottom-container`));
               this._renderComments(this._comments);
             }
           }
@@ -234,7 +235,18 @@ export class Popup extends AbstractComponent {
   }
 
   _deleteMessage() {
-    unrender(this.getElement().querySelector(`.form-details__bottom-container`));
+    this.getElement()
+      .querySelectorAll(`.film-details__comment`).forEach((comment) => {
+        comment.addEventListener(`click`, (e) => {
+          e.preventDefault();
+          if (e.target.classList.contains(`film-details__comment-delete`)) {
+            const commentId = [...this.getElement().querySelectorAll(`.film-details__comment`)].indexOf(comment);
+            this._comments.splice(commentId, 1);
+            unrender(this.getElement().querySelector(`.form-details__bottom-container`));
+            this._renderComments(this._comments);
+          }
+        });
+      });
   }
 
   _escapeHTML(string) {
@@ -249,7 +261,7 @@ export class Popup extends AbstractComponent {
     clearContainer(this.getElement().querySelector(`.film-details__add-emoji-label`));
   }
 
-  checkEmoji() {
+  _checkEmoji() {
     this.getElement()
       .querySelector(`.film-details__emoji-list`)
       .addEventListener(`click`, (e) => {
