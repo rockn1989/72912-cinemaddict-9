@@ -9,12 +9,11 @@ import {Statistics} from './statistics.js';
 export class FilmsController extends PageController {
   constructor(container, films) {
     super(container, films);
-
   }
 
   _renderStatistics() {
     this._container.append(new Statistics().getElement());
-    this.hideStatistics();
+    this._hideStatistics();
   }
 
   render() {
@@ -45,9 +44,9 @@ export class FilmsController extends PageController {
   _addHandlers() {
     this._container.querySelector(`.main-navigation`).addEventListener(`click`, (e) => {
       if (e.target.getAttribute(`href`) === `#stats`) {
-        this.toggleStatistics();
+        this._toggleStatistics();
       } else {
-        this.hideStatistics();
+        this._hideStatistics();
         clearContainer(this._container.querySelector(`.films-list .films-list__container`));
         let filtredFilms = [];
         switch (e.target.getAttribute(`href`)) {
@@ -113,19 +112,19 @@ export class FilmsController extends PageController {
     });
   }
 
-  showStatistics() {
+  _showStatistics() {
     this._container.querySelector(`.statistic`).classList.remove(`visually-hidden`);
   }
 
-  hideStatistics() {
+  _hideStatistics() {
     this._container.querySelector(`.statistic`).classList.add(`visually-hidden`);
   }
 
-  toggleStatistics() {
+  _toggleStatistics() {
     if (this._container.querySelector(`.statistic`).classList.contains(`visually-hidden`)) {
-      this.showStatistics();
+      this._showStatistics();
     } else {
-      this.hideStatistics();
+      this._hideStatistics();
     }
   }
 
